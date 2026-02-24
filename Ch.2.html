@@ -1,0 +1,569 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Environment Properties</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;900&display=swap');
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        :root {
+            --bg: #f8f9fa; --card: #fff; --primary: #4F46E5; --text: #1f2937;
+            --light: #6b7280; --border: #e5e7eb; --success: #10b981; --error: #ef4444;
+            --nav-bg: #1a1b2e; --nav-text: #c0c4d0;
+        }
+        body { font-family: 'Inter', sans-serif; background: var(--bg); color: var(--text); }
+        .container { max-width: 1300px; margin: 0 auto; padding: 0 40px; }
+        .top-nav { background: var(--nav-bg); padding: 14px 30px; display: flex; align-items: center; justify-content: space-between; position: sticky; top: 0; z-index: 1100; border-bottom: 2px solid rgba(79,70,229,0.4); }
+        .top-nav .nav-left { display: flex; align-items: center; gap: 8px; font-weight: 700; font-size: 1rem; color: #fff; }
+        .top-nav .nav-left span.course-code { color: #fff; }
+        .top-nav .nav-left span.interactive-label { color: var(--primary); }
+        .top-nav .nav-right { display: flex; align-items: center; gap: 10px; }
+        .nav-badge { padding: 6px 16px; border-radius: 20px; font-size: 0.8rem; font-weight: 600; border: 1.5px solid rgba(255,255,255,0.2); color: var(--nav-text); background: transparent; }
+        .nav-badge.accent { border-color: var(--primary); color: #a5b4fc; }
+        .back-bar { display: none; background: var(--nav-bg); padding: 14px 30px; border-bottom: 2px solid rgba(79,70,229,0.4); position: sticky; top: 0; z-index: 1100; }
+        .back-bar.show { display: flex; align-items: center; justify-content: space-between; }
+        .back-link { color: #ffffff; font-weight: 600; font-size: 0.9rem; cursor: pointer; text-decoration: none; display: flex; align-items: center; gap: 6px; transition: opacity 0.2s; }
+        .back-link:hover { opacity: 0.8; }
+        .back-bar .nav-right { display: flex; gap: 10px; }
+        .site-footer { background: var(--nav-bg); padding: 30px 30px 25px; text-align: center; margin-top: 60px; border-top: 2px solid rgba(79,70,229,0.3); }
+        .footer-title { font-size: 1rem; color: #fff; font-weight: 700; margin-bottom: 4px; }
+        .footer-title span.chapter-label { color: #7c83a1; font-weight: 400; }
+        .footer-subtitle { font-size: 0.85rem; color: #5a5f7a; margin-top: 4px; }
+        header { padding: 80px 0 50px; background: linear-gradient(135deg, var(--primary), #3730A3); color: white; margin-bottom: 60px; }
+        h1 { font-size: clamp(2.5rem, 6vw, 4rem); font-weight: 900; margin-bottom: 20px; }
+        .subtitle { font-size: 1.3rem; opacity: 0.9; }
+        .intro { padding: 60px 0; text-align: center; }
+        .intro h2 { font-size: 2.5rem; font-weight: 700; margin-bottom: 25px; color: var(--primary); }
+        .intro p { font-size: 1.2rem; color: var(--light); max-width: 800px; margin: 0 auto 40px; }
+        .btn { padding: 18px 45px; background: var(--primary); color: white; border: none; border-radius: 12px; font-weight: 700; cursor: pointer; }
+        .property-section { display: none; padding: 40px 0 80px; }
+        .property-section.active { display: block; }
+        .property-header { text-align: center; margin-bottom: 60px; }
+        .property-number { color: var(--primary); font-size: 0.95rem; font-weight: 600; margin-bottom: 15px; }
+        .property-header h2 { font-size: 3rem; font-weight: 900; margin-bottom: 20px; }
+        .property-header p { font-size: 1.2rem; color: var(--light); }
+        .demo-comparison { display: grid; grid-template-columns: 1fr 1fr; gap: 40px; margin: 60px 0; }
+        .demo-card { background: var(--card); border-radius: 20px; padding: 40px; box-shadow: 0 20px 25px -5px rgba(0,0,0,0.1); }
+        .demo-card h3 { font-size: 1.8rem; font-weight: 700; margin-bottom: 8px; color: var(--primary); }
+        .demo-card p { color: var(--light); margin-bottom: 30px; }
+        .demo-desc { background: rgba(79,70,229,0.06); border-left: 3px solid var(--primary); padding: 12px 16px; border-radius: 0 8px 8px 0; margin-bottom: 20px; font-size: 0.9rem; color: var(--text); line-height: 1.5; }
+        .demo-area { background: var(--bg); border-radius: 15px; padding: 40px; min-height: 400px; display: flex; align-items: center; justify-content: center; margin-bottom: 25px; border: 2px solid var(--border); }
+        .demo-instruction { text-align: center; color: #06B6D4; font-weight: 600; margin-bottom: 20px; }
+        .chess-board { display: grid; grid-template-columns: repeat(8, 45px); grid-template-rows: repeat(8, 45px); border: 3px solid #333; border-radius: 4px; overflow: hidden; }
+        .chess-cell { width: 45px; height: 45px; display: flex; align-items: center; justify-content: center; font-size: 1.6rem; cursor: pointer; transition: background 0.2s; user-select: none; }
+        .chess-cell.light { background: #f0d9b5; }
+        .chess-cell.dark { background: #b58863; }
+        .chess-cell.selected { box-shadow: inset 0 0 0 3px var(--primary); background: rgba(79,70,229,0.3) !important; }
+        .chess-cell.last-move { background: rgba(255,255,0,0.3) !important; }
+        .chess-turn { text-align: center; margin-top: 12px; font-weight: 700; font-size: 0.95rem; padding: 8px 16px; border-radius: 8px; }
+        .chess-turn.white { background: rgba(79,70,229,0.1); color: var(--primary); }
+        .chess-turn.black { background: rgba(239,68,68,0.1); color: var(--error); }
+        .chess-turn.thinking { background: rgba(239,68,68,0.1); color: var(--error); animation: pulse 1s infinite; }
+        @keyframes pulse { 0%,100%{ opacity:1; } 50%{ opacity:0.5; } }
+        .product-grid { display: grid; grid-template-columns: repeat(3, 130px); gap: 15px; }
+        .product-box { background: white; border-radius: 12px; padding: 20px; border: 3px solid var(--border); cursor: pointer; text-align: center; }
+        .product-box .price { font-size: 1.5rem; font-weight: 700; color: #333; margin: 10px 0; }
+        .product-box.revealed { border-color: var(--primary); }
+        .product-box .rating { color: #f59e0b; margin-top: 8px; display: none; }
+        .product-box.revealed .rating { display: block; }
+        .atm-screen { background: #1a1a2e; border-radius: 15px; padding: 30px; width: 350px; }
+        .atm-display { background: #16213e; color: #0ff; padding: 20px; border-radius: 8px; margin-bottom: 20px; min-height: 100px; font-family: monospace; }
+        .atm-buttons { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
+        .atm-btn { padding: 15px; background: #0f3460; color: white; border: none; border-radius: 8px; cursor: pointer; font-weight: 700; }
+        .atm-btn:active { background: var(--primary); }
+        .flight-board { width: 100%; }
+        .flight-row { background: white; padding: 15px 20px; margin: 8px 0; border-radius: 8px; border-left: 4px solid var(--border); display: grid; grid-template-columns: 80px 120px 1fr 100px; gap: 15px; align-items: center; }
+        .flight-time { font-weight: 700; font-size: 1.1rem; }
+        .flight-route { color: var(--light); }
+        .flight-status { padding: 5px 12px; border-radius: 6px; font-size: 0.85rem; font-weight: 600; text-align: center; }
+        .flight-status.ontime { background: rgba(16,185,129,0.2); color: var(--success); }
+        .flight-status.delayed { background: rgba(239,68,68,0.2); color: var(--error); }
+        .refresh-btn { margin-top: 15px; padding: 12px 25px; background: var(--primary); color: white; border: none; border-radius: 8px; cursor: pointer; font-weight: 600; }
+        .email-list { width: 100%; }
+        .email-item { background: white; padding: 18px; margin: 10px 0; border-radius: 10px; border: 2px solid var(--border); cursor: pointer; transition: all 0.4s; opacity: 0.4; }
+        .email-item:hover { border-color: var(--primary); }
+        .email-item.processing { opacity: 1; border-color: #f59e0b; box-shadow: 0 0 15px rgba(245,158,11,0.3); }
+        .email-item.done { opacity: 1; }
+        .email-header { display: flex; justify-content: space-between; margin-bottom: 8px; }
+        .email-sender { font-weight: 700; }
+        .email-subject { color: var(--light); font-size: 0.95rem; }
+        .spam-badge { padding: 4px 10px; border-radius: 6px; font-size: 0.8rem; font-weight: 700; display: none; }
+        .email-item.checked .spam-badge { display: inline-block; }
+        .email-item.spam .spam-badge { background: rgba(239,68,68,0.2); color: var(--error); }
+        .email-item.safe .spam-badge { background: rgba(16,185,129,0.2); color: var(--success); }
+        .episodic-note { text-align: center; font-size: 0.85rem; color: var(--light); margin-top: 12px; font-style: italic; }
+        .investment-timeline { display: flex; flex-direction: column; gap: 15px; }
+        .timeline-step { background: white; padding: 20px; border-radius: 10px; border-left: 4px solid var(--border); position: relative; transition: all 0.4s; opacity: 0.4; }
+        .timeline-step.active { border-left-color: #f59e0b; background: rgba(245,158,11,0.05); opacity: 1; box-shadow: 0 0 15px rgba(245,158,11,0.2); }
+        .timeline-step.completed { border-left-color: var(--success); opacity: 1; background: rgba(16,185,129,0.05); }
+        .timeline-step.waiting { opacity: 0.4; }
+        .step-number { position: absolute; left: -15px; top: 20px; width: 30px; height: 30px; border-radius: 50%; background: var(--border); color: white; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 0.9rem; transition: background 0.3s; }
+        .timeline-step.active .step-number { background: #f59e0b; }
+        .timeline-step.completed .step-number { background: var(--success); }
+        .step-title { font-weight: 700; margin-bottom: 5px; }
+        .step-desc { font-size: 0.9rem; color: var(--light); }
+        .step-result { font-size: 0.85rem; color: var(--success); font-weight: 600; margin-top: 5px; display: none; }
+        .timeline-step.completed .step-result { display: block; }
+        .sequential-note { text-align: center; font-size: 0.85rem; color: var(--light); margin-top: 12px; font-style: italic; }
+        .ttt-board { display: grid; grid-template-columns: repeat(3, 100px); grid-template-rows: repeat(3, 100px); gap: 6px; background: #333; border-radius: 10px; padding: 6px; }
+        .ttt-cell { background: white; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 2.5rem; font-weight: 900; cursor: pointer; transition: background 0.2s; user-select: none; }
+        .ttt-cell:hover { background: #f0f0ff; }
+        .ttt-cell.x { color: var(--primary); }
+        .ttt-cell.o { color: var(--error); }
+        .ttt-status { text-align: center; margin-top: 15px; font-weight: 700; font-size: 1.1rem; color: var(--primary); }
+        .ttt-reset { margin-top: 10px; padding: 8px 20px; background: var(--primary); color: white; border: none; border-radius: 8px; cursor: pointer; font-weight: 600; }
+        .stock-ticker { width: 100%; }
+        .stock-item { background: white; padding: 15px 20px; margin: 8px 0; border-radius: 10px; display: flex; align-items: center; justify-content: space-between; border-left: 4px solid var(--border); transition: all 0.3s; }
+        .stock-name { font-weight: 700; font-size: 1rem; }
+        .stock-symbol { font-size: 0.8rem; color: var(--light); }
+        .stock-price { font-size: 1.3rem; font-weight: 700; font-family: monospace; }
+        .stock-change { padding: 4px 10px; border-radius: 6px; font-size: 0.85rem; font-weight: 700; min-width: 70px; text-align: center; }
+        .stock-change.up { background: rgba(16,185,129,0.15); color: var(--success); }
+        .stock-change.down { background: rgba(239,68,68,0.15); color: var(--error); }
+        .stock-item.flash-up { border-left-color: var(--success); }
+        .stock-item.flash-down { border-left-color: var(--error); }
+        .stock-live-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--error); display: inline-block; animation: blink 1s infinite; margin-right: 6px; }
+        @keyframes blink { 0%,100%{ opacity:1; } 50%{ opacity:0.3; } }
+        .stock-header { display: flex; align-items: center; margin-bottom: 10px; font-size: 0.85rem; font-weight: 600; color: var(--error); }
+        .elevator-building { display: flex; gap: 25px; align-items: flex-start; justify-content: center; }
+        .shaft-wrapper { position: relative; width: 80px; }
+        .building-shaft { display: flex; flex-direction: column; width: 80px; border: 3px solid #4a5568; border-radius: 8px 8px 0 0; background: #1a202c; }
+        .building-floor { height: 38px; border-bottom: 1px solid #2d3748; display: flex; align-items: center; justify-content: space-between; padding: 0 8px; position: relative; transition: background 0.3s; }
+        .building-floor .floor-num { font-size: 0.7rem; font-weight: 700; color: #4a5568; z-index: 2; }
+        .building-floor .floor-doors { display: flex; gap: 3px; }
+        .floor-door-left, .floor-door-right { width: 11px; height: 22px; background: #2d3748; border: 1px solid #4a5568; border-radius: 2px; transition: all 0.4s; }
+        .building-floor.floor-active .floor-door-left { transform: translateX(-4px); background: #065f46; border-color: #10b981; }
+        .building-floor.floor-active .floor-door-right { transform: translateX(4px); background: #065f46; border-color: #10b981; }
+        .building-floor.floor-lit { background: rgba(79,70,229,0.15); }
+        .building-floor.floor-lit .floor-num { color: #818cf8; }
+        .building-floor.floor-active { background: rgba(16,185,129,0.25) !important; }
+        .building-floor.floor-active .floor-num { color: #10b981 !important; }
+        .elevator-cabin { width: 58px; height: 32px; background: linear-gradient(135deg, #4F46E5, #3730A3); border-radius: 5px; position: absolute; left: 9px; transition: top 0.7s cubic-bezier(0.25, 0.46, 0.45, 0.94); box-shadow: 0 0 18px rgba(79,70,229,0.7); display: flex; align-items: center; justify-content: center; font-size: 0.9rem; z-index: 5; }
+        .floor-buttons-panel { background: #2c3e50; border-radius: 15px; padding: 18px 14px; display: flex; flex-direction: column; gap: 8px; align-items: center; }
+        .floor-btn-row { display: flex; gap: 10px; }
+        .floor-btn-new { width: 46px; height: 46px; background: radial-gradient(circle at 35% 35%, #4a5568, #2d3748); color: #a0aec0; border: 2px solid #4a5568; border-radius: 50%; cursor: pointer; font-weight: 800; font-size: 1rem; transition: all 0.2s; display: flex; align-items: center; justify-content: center; box-shadow: 0 3px 6px rgba(0,0,0,0.4), inset 0 1px 0 rgba(255,255,255,0.05); position: relative; }
+        .floor-btn-new:hover { border-color: #818cf8; background: radial-gradient(circle at 35% 35%, #5a6a8a, #3d4f6e); color: white; transform: scale(1.08); box-shadow: 0 4px 10px rgba(79,70,229,0.4), inset 0 1px 0 rgba(255,255,255,0.1); }
+        .floor-btn-new.floor-btn-current { background: radial-gradient(circle at 35% 35%, #1adb6e, #0ea85a); border-color: #10b981; color: white; box-shadow: 0 0 14px rgba(16,185,129,0.6), inset 0 1px 0 rgba(255,255,255,0.2); }
+        .floor-btn-new.floor-btn-going { background: radial-gradient(circle at 35% 35%, #fbbf24, #d97706); border-color: #f59e0b; color: white; animation: pulse 0.8s infinite; box-shadow: 0 0 14px rgba(245,158,11,0.6), inset 0 1px 0 rgba(255,255,255,0.2); }
+        .elevator-display-new { background: #000; color: #0f0; font-size: 2rem; font-weight: 700; text-align: center; padding: 8px 15px; border-radius: 8px; margin-bottom: 5px; font-family: monospace; letter-spacing: 3px; width: 100%; }
+        .elevator-status { text-align: center; font-size: 0.75rem; color: #6b7280; margin-top: 4px; font-style: italic; min-height: 16px; }
+
+        /* ===== WHEN IS IT USED BOXES ===== */
+        .concept-summary { border-radius: 14px; padding: 16px 18px; margin: 18px 0 14px; display: flex; flex-direction: column; gap: 12px; }
+        .box-indigo  { background: linear-gradient(135deg, rgba(79,70,229,0.07), rgba(79,70,229,0.03)); border: 1.5px solid rgba(79,70,229,0.2); }
+        .box-amber   { background: linear-gradient(135deg, rgba(245,158,11,0.07), rgba(245,158,11,0.03)); border: 1.5px solid rgba(245,158,11,0.25); }
+        .box-green   { background: linear-gradient(135deg, rgba(16,185,129,0.07), rgba(16,185,129,0.03)); border: 1.5px solid rgba(16,185,129,0.25); }
+        .box-red     { background: linear-gradient(135deg, rgba(239,68,68,0.07), rgba(239,68,68,0.03)); border: 1.5px solid rgba(239,68,68,0.2); }
+        .box-teal    { background: linear-gradient(135deg, rgba(6,214,160,0.07), rgba(6,214,160,0.03)); border: 1.5px solid rgba(6,214,160,0.25); }
+        .concept-row { display: flex; align-items: flex-start; gap: 12px; }
+        .concept-icon { font-size: 1.4rem; flex-shrink: 0; margin-top: 1px; }
+        .concept-title { font-weight: 700; font-size: 0.9rem; color: var(--text); margin-bottom: 3px; }
+        .concept-body { font-size: 0.82rem; color: var(--light); line-height: 1.55; }
+
+        .drone-canvas-wrap { text-align: center; }
+        .drone-canvas { width: 320px; height: 320px; background: #0a0e27; border-radius: 12px; position: relative; cursor: crosshair; overflow: hidden; border: 2px solid #1e2a4a; }
+        .drone-canvas .grid-line-h, .drone-canvas .grid-line-v { position: absolute; background: rgba(79,70,229,0.1); }
+        .drone-canvas .grid-line-h { width: 100%; height: 1px; }
+        .drone-canvas .grid-line-v { height: 100%; width: 1px; }
+        .drone-dot { width: 18px; height: 18px; background: #06d6a0; border-radius: 50%; position: absolute; transform: translate(-50%,-50%); transition: all 0.4s cubic-bezier(.25,.8,.25,1); box-shadow: 0 0 15px rgba(6,214,160,0.6); pointer-events: none; }
+        .drone-trail { position: absolute; width: 6px; height: 6px; border-radius: 50%; background: rgba(6,214,160,0.3); transform: translate(-50%,-50%); pointer-events: none; }
+        .drone-coords { margin-top: 12px; font-family: monospace; font-size: 0.95rem; color: var(--primary); font-weight: 600; }
+        .checkout-screen { background: white; border-radius: 15px; padding: 25px; width: 100%; max-width: 400px; }
+        .item-scanner { background: var(--bg); border: 3px dashed var(--border); border-radius: 12px; padding: 40px; text-align: center; margin-bottom: 20px; cursor: pointer; }
+        .scanned-items { margin-bottom: 20px; }
+        .scanned-item { display: flex; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid var(--border); }
+        .checkout-total { display: flex; justify-content: space-between; font-size: 1.5rem; font-weight: 700; padding-top: 15px; border-top: 2px solid var(--primary); }
+        .meeting-room { width: 100%; }
+        .participant-list { display: grid; gap: 12px; }
+        .participant { background: white; padding: 18px; border-radius: 10px; border-left: 4px solid var(--primary); display: flex; align-items: center; gap: 15px; }
+        .participant-avatar { width: 50px; height: 50px; border-radius: 50%; background: linear-gradient(135deg, var(--primary), #3730A3); display: flex; align-items: center; justify-content: center; color: white; font-weight: 700; font-size: 1.2rem; }
+        .participant-info { flex: 1; }
+        .participant-name { font-weight: 700; margin-bottom: 3px; }
+        .participant-role { font-size: 0.85rem; color: var(--light); }
+        .participant-status { padding: 5px 12px; border-radius: 6px; font-size: 0.8rem; font-weight: 600; }
+        .participant-status.online { background: rgba(16,185,129,0.2); color: var(--success); }
+        .examples { display: flex; gap: 10px; flex-wrap: wrap; }
+        .example-tag { padding: 8px 16px; background: rgba(79,70,229,0.1); border: 2px solid var(--primary); border-radius: 8px; font-size: 0.9rem; font-weight: 600; color: var(--primary); }
+        .nav-controls { display: flex; justify-content: space-between; gap: 20px; margin-top: 60px; }
+        .nav-btn { flex: 1; padding: 16px 30px; background: white; border: 2px solid var(--border); border-radius: 10px; font-weight: 600; cursor: pointer; font-family: 'Inter'; }
+        .nav-btn.primary { background: var(--primary); color: white; }
+        .nav-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+        .quiz-section { display: none; padding: 60px 0; }
+        .quiz-section.active { display: block; }
+        .quiz-header { text-align: center; margin-bottom: 60px; }
+        .quiz-header h2 { font-size: 3rem; font-weight: 900; color: var(--primary); }
+        .quiz-progress { height: 6px; background: var(--border); border-radius: 10px; margin-top: 30px; }
+        .quiz-progress-bar { height: 100%; background: var(--primary); transition: width 0.3s; }
+        .question-container { max-width: 900px; margin: 0 auto; }
+        .question-text { font-size: 1.5rem; font-weight: 600; margin-bottom: 40px; }
+        .options { display: grid; gap: 15px; }
+        .option { padding: 25px 30px; background: white; border: 2px solid var(--border); border-radius: 12px; cursor: pointer; transition: all 0.2s; }
+        .option:hover { border-color: var(--primary); }
+        .option.selected { border-color: var(--primary); background: rgba(79,70,229,0.1); }
+        .option.correct { border-color: var(--success); background: rgba(16,185,129,0.1); }
+        .option.wrong { border-color: var(--error); background: rgba(239,68,68,0.1); }
+        .quiz-result { display: none; text-align: center; padding: 80px 40px; background: white; border-radius: 20px; max-width: 700px; margin: 0 auto; }
+        .quiz-result.show { display: block; }
+        .score-display { font-size: 6rem; font-weight: 900; color: var(--primary); margin: 30px 0; }
+        .result-message { font-size: 1.3rem; color: var(--light); margin-bottom: 40px; }
+        .progress-indicator { position: fixed; top: 75px; right: 30px; background: white; padding: 15px 25px; border-radius: 10px; box-shadow: 0 20px 25px -5px rgba(0,0,0,0.1); font-weight: 600; color: var(--primary); z-index: 1000; display: none; }
+        .progress-indicator.show { display: block; }
+        .quiz-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.5); display: flex; align-items: center; justify-content: center; z-index: 2000; animation: fadeIn 0.3s; }
+        .quiz-popup { background: white; border-radius: 20px; padding: 35px 40px; max-width: 500px; width: 90%; box-shadow: 0 25px 50px rgba(0,0,0,0.25); animation: popIn 0.3s; }
+        .quiz-popup.popup-correct { border-top: 5px solid var(--success); }
+        .quiz-popup.popup-wrong { border-top: 5px solid var(--error); }
+        .popup-icon { font-size: 3rem; margin-bottom: 12px; }
+        .popup-title { font-size: 1.4rem; font-weight: 800; margin-bottom: 10px; }
+        .popup-title.green { color: var(--success); }
+        .popup-title.red { color: var(--error); }
+        .popup-correct-answer { background: rgba(16,185,129,0.1); padding: 10px 16px; border-radius: 8px; font-weight: 600; color: var(--success); margin: 12px 0; }
+        .popup-explanation { color: var(--light); font-size: 0.95rem; line-height: 1.6; margin-bottom: 20px; }
+        .popup-btn { padding: 12px 30px; background: var(--primary); color: white; border: none; border-radius: 10px; font-weight: 700; cursor: pointer; font-size: 1rem; }
+        @keyframes fadeIn { from { opacity:0; } to { opacity:1; } }
+        @keyframes popIn { from { transform:scale(0.8); opacity:0; } to { transform:scale(1); opacity:1; } }
+        .quiz-summary { max-width: 700px; margin: 30px auto 0; text-align: left; }
+        .summary-item { background: var(--bg); padding: 16px 20px; border-radius: 10px; margin: 10px 0; border-left: 4px solid var(--border); }
+        .summary-item.summary-correct { border-left-color: var(--success); }
+        .summary-item.summary-wrong { border-left-color: var(--error); }
+        .summary-q { font-weight: 700; font-size: 0.95rem; margin-bottom: 6px; }
+        .summary-a { font-size: 0.85rem; color: var(--light); }
+        .summary-a span.right { color: var(--success); font-weight: 600; }
+        .summary-a span.wrong-text { color: var(--error); font-weight: 600; text-decoration: line-through; }
+        .props-summary { max-width: 750px; margin: 45px auto 0; text-align: left; }
+        .props-summary-title { text-align: center; font-size: 1.5rem; font-weight: 800; color: var(--primary); margin-bottom: 25px; }
+        .prop-card { background: white; border-radius: 14px; padding: 20px 24px; margin: 12px 0; border-left: 4px solid var(--primary); box-shadow: 0 2px 8px rgba(0,0,0,0.06); }
+        .prop-card-head { display: flex; align-items: center; gap: 12px; margin-bottom: 10px; }
+        .prop-card-num { background: var(--primary); color: white; width: 28px; height: 28px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 0.8rem; font-weight: 800; flex-shrink: 0; }
+        .prop-card-name { font-weight: 800; font-size: 1.05rem; color: var(--text); }
+        .prop-card-body { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+        .prop-side { background: var(--bg); padding: 10px 14px; border-radius: 8px; }
+        .prop-side-label { font-weight: 700; font-size: 0.78rem; color: var(--primary); margin-bottom: 3px; text-transform: uppercase; letter-spacing: 0.5px; }
+        .prop-side-text { font-size: 0.85rem; color: var(--light); line-height: 1.5; }
+    </style>
+</head>
+<body>
+    <nav class="top-nav" id="topNav">
+        <div class="nav-left">
+            <span class="course-code">IT426</span>
+            <span class="interactive-label">Interactive</span>
+        </div>
+        <div class="nav-right">
+            <span class="nav-badge accent">AI Systems · Chapter 2</span>
+            <span class="nav-badge">King Saud University</span>
+        </div>
+    </nav>
+    <div class="back-bar" id="backBar">
+        <a class="back-link" onclick="goBack()">← Back</a>
+        <div class="nav-right">
+            <span class="nav-badge accent">IT426 · AI Systems</span>
+            <span class="nav-badge">KSU</span>
+        </div>
+    </div>
+    <div class="progress-indicator" id="progressIndicator"><span id="progressText">Property 1/6</span></div>
+    <header><div class="container"><h1>Environment Properties</h1><p class="subtitle">Interactive guide to AI environment characteristics</p></div></header>
+    <div class="container">
+        <section class="intro" id="introSection">
+            <h2>Ready to Explore?</h2>
+            <p>Discover six properties through hands-on demos.<br><strong>Click and interact!</strong></p>
+            <button class="btn" onclick="startJourney()">Start</button>
+        </section>
+
+        <!-- Property 1: Observability -->
+        <section class="property-section" id="property-0">
+            <div class="property-header"><div class="property-number">01/06</div><h2>Observability</h2><p>Full visibility vs hidden information</p></div>
+            <div class="demo-comparison">
+                <div class="demo-card">
+                    <h3>Fully Observable</h3><p>Complete state visibility</p>
+                    <div class="demo-desc">The agent can see the entire state of the environment at every moment. Nothing is hidden — all pieces, positions, and moves are visible to both players.</div>
+                    <div class="demo-instruction">♟️ Watch both sides play — every piece and move is visible to everyone</div>
+                    <div class="demo-area"><div style="display:flex;flex-direction:column;align-items:center;"><div class="chess-board" id="chessBoard"></div><div class="chess-turn white" id="chessTurn">White is thinking...</div></div></div>
+                    <div class="concept-summary box-indigo">
+                        <div class="concept-row"><span class="concept-icon">✅</span><div><div class="concept-title">When is it used?</div><div class="concept-body">When the agent needs complete knowledge to make optimal decisions — board games, security surveillance, factory monitoring, or any system where all data is accessible in real time.</div></div></div>
+                    </div>
+                    <div class="examples"><span class="example-tag">Chess Board</span><span class="example-tag">Security Cameras</span><span class="example-tag">Puzzle Game</span></div>
+                </div>
+                <div class="demo-card">
+                    <h3>Partially Observable</h3><p>Hidden information</p>
+                    <div class="demo-desc">The agent can only see part of the environment. Key information like prices and ratings are hidden until you interact — decisions are made with incomplete data.</div>
+                    <div class="demo-instruction">👆 Click products to reveal details</div>
+                    <div class="demo-area"><div class="product-grid" id="productGrid"></div></div>
+                    <div class="concept-summary box-amber">
+                        <div class="concept-row"><span class="concept-icon">✅</span><div><div class="concept-title">When is it used?</div><div class="concept-body">When the agent cannot access full state — medical diagnosis (hidden symptoms), poker (hidden cards), or real-world robotics where sensors have limits. Agent must reason under uncertainty.</div></div></div>
+                    </div>
+                    <div class="examples"><span class="example-tag">Online Shopping</span><span class="example-tag">Medical Diagnosis</span><span class="example-tag">Stock Trading</span></div>
+                </div>
+            </div>
+            <div class="nav-controls"><button class="nav-btn" disabled>Previous</button><button class="nav-btn primary" onclick="nextProperty()">Next</button></div>
+        </section>
+
+        <!-- Property 2: Determinism -->
+        <section class="property-section" id="property-1">
+            <div class="property-header"><div class="property-number">02/06</div><h2>Determinism</h2><p>Predictable vs random outcomes</p></div>
+            <div class="demo-comparison">
+                <div class="demo-card">
+                    <h3>Deterministic</h3><p>Same action, same result</p>
+                    <div class="demo-desc">The outcome is 100% predictable. Withdraw $200 and you'll always get exactly $200 — no surprises, no randomness.</div>
+                    <div class="demo-instruction">👆 Enter PIN and withdraw</div>
+                    <div class="demo-area"><div class="atm-screen" id="atmScreen"></div></div>
+                    <div class="concept-summary box-green">
+                        <div class="concept-row"><span class="concept-icon">✅</span><div><div class="concept-title">When is it used?</div><div class="concept-body">When outcomes are fully predictable and repeatable — calculators, vending machines, alarm clocks, or any rule-based system where the same input always produces the exact same output.</div></div></div>
+                    </div>
+                    <div class="examples"><span class="example-tag">ATM Withdrawal</span><span class="example-tag">Calculator</span><span class="example-tag">Alarm Clock</span></div>
+                </div>
+                <div class="demo-card">
+                    <h3>Stochastic</h3><p>Random outcomes</p>
+                    <div class="demo-desc">The same conditions can produce different outcomes each time. Refresh the board — flight statuses change randomly due to unpredictable factors like weather.</div>
+                    <div class="demo-instruction">🔄 Refresh to see status changes</div>
+                    <div class="demo-area"><div class="flight-board" id="flightBoard"></div></div>
+                    <div class="concept-summary box-red">
+                        <div class="concept-row"><span class="concept-icon">✅</span><div><div class="concept-title">When is it used?</div><div class="concept-body">When real-world uncertainty is involved — weather prediction, traffic flow, customer behavior, or any environment affected by random external factors the agent cannot fully control.</div></div></div>
+                    </div>
+                    <div class="examples"><span class="example-tag">Flight Delays</span><span class="example-tag">Network Speed</span><span class="example-tag">Customer Arrival</span></div>
+                </div>
+            </div>
+            <div class="nav-controls"><button class="nav-btn" onclick="previousProperty()">Previous</button><button class="nav-btn primary" onclick="nextProperty()">Next</button></div>
+        </section>
+
+        <!-- Property 3: Episodic vs Sequential -->
+        <section class="property-section" id="property-2">
+            <div class="property-header"><div class="property-number">03/06</div><h2>Episodic vs Sequential</h2><p>Independent vs connected actions</p></div>
+            <div class="demo-comparison">
+                <div class="demo-card">
+                    <h3>Episodic</h3><p>Independent tasks</p>
+                    <div class="demo-desc">Each decision is independent. Classifying one email as spam has zero effect on the next one — the order doesn't matter at all.</div>
+                    <div class="demo-instruction">🔄 Watch — each email classified independently (random order)</div>
+                    <div class="demo-area"><div class="email-list" id="emailList"></div></div>
+                    <div class="concept-summary box-indigo">
+                        <div class="concept-row"><span class="concept-icon">✅</span><div><div class="concept-title">When is it used?</div><div class="concept-body">When each task is self-contained and isolated — spam filters, image classifiers, product quality inspection, or password validation. No memory of past decisions needed; each episode is complete on its own.</div></div></div>
+                    </div>
+                    <div class="examples"><span class="example-tag">Spam Detection</span><span class="example-tag">Product Review</span><span class="example-tag">Password Check</span></div>
+                </div>
+                <div class="demo-card">
+                    <h3>Sequential</h3><p>Connected decisions</p>
+                    <div class="demo-desc">Each step builds on the result of the previous one. You can't choose investments before assessing risk — the order is critical and decisions are chained.</div>
+                    <div class="demo-instruction">🔗 Watch — each step depends on the previous result</div>
+                    <div class="demo-area"><div class="investment-timeline" id="investmentTimeline"></div></div>
+                    <div class="concept-summary box-amber">
+                        <div class="concept-row"><span class="concept-icon">✅</span><div><div class="concept-title">When is it used?</div><div class="concept-body">When decisions affect future options — chess, robotic navigation, investment planning, or medical treatment steps. Each action has long-term consequences that must be considered before acting.</div></div></div>
+                    </div>
+                    <div class="examples"><span class="example-tag">Investment Planning</span><span class="example-tag">Career Progression</span><span class="example-tag">House Renovation</span></div>
+                </div>
+            </div>
+            <div class="nav-controls"><button class="nav-btn" onclick="previousProperty()">Previous</button><button class="nav-btn primary" onclick="nextProperty()">Next</button></div>
+        </section>
+
+        <!-- Property 4: Static vs Dynamic -->
+        <section class="property-section" id="property-3">
+            <div class="property-header"><div class="property-number">04/06</div><h2>Static vs Dynamic</h2><p>Waiting vs changing environment</p></div>
+            <div class="demo-comparison">
+                <div class="demo-card">
+                    <h3>Static</h3><p>Environment waits</p>
+                    <div class="demo-desc">The environment doesn't change while you're deciding. Take as long as you want — nothing moves until you make your move.</div>
+                    <div class="demo-instruction">👆 Play at your own pace — nothing changes until you move</div>
+                    <div class="demo-area"><div id="tttContainer" style="display:flex;flex-direction:column;align-items:center;"></div></div>
+                    <div class="concept-summary box-green">
+                        <div class="concept-row"><span class="concept-icon">✅</span><div><div class="concept-title">When is it used?</div><div class="concept-body">When the environment is frozen until the agent acts — crossword puzzles, photo editing, Sudoku, or theorem proving. The agent can deliberate without time pressure or fear of the world shifting mid-decision.</div></div></div>
+                    </div>
+                    <div class="examples"><span class="example-tag">Crossword Puzzle</span><span class="example-tag">Photo Editing</span><span class="example-tag">Sudoku</span></div>
+                </div>
+                <div class="demo-card">
+                    <h3>Dynamic</h3><p>Constant change</p>
+                    <div class="demo-desc">The environment keeps changing whether you act or not. Stock prices move on their own — if you wait too long, the opportunity might be gone.</div>
+                    <div class="demo-instruction">📈 Watch prices change in real-time — you can't pause the market!</div>
+                    <div class="demo-area"><div class="stock-ticker" id="stockTicker"></div></div>
+                    <div class="concept-summary box-red">
+                        <div class="concept-row"><span class="concept-icon">✅</span><div><div class="concept-title">When is it used?</div><div class="concept-body">When the world keeps changing independently — self-driving cars, live trading bots, online multiplayer games, or real-time robotics. The agent must act quickly because hesitation itself changes the environment.</div></div></div>
+                    </div>
+                    <div class="examples"><span class="example-tag">Stock Market</span><span class="example-tag">Self-Driving Car</span><span class="example-tag">Online Multiplayer Game</span></div>
+                </div>
+            </div>
+            <div class="nav-controls"><button class="nav-btn" onclick="previousProperty()">Previous</button><button class="nav-btn primary" onclick="nextProperty()">Next</button></div>
+        </section>
+
+        <!-- Property 5: Discrete vs Continuous -->
+        <section class="property-section" id="property-4">
+            <div class="property-header"><div class="property-number">05/06</div><h2>Discrete vs Continuous</h2><p>Limited vs infinite choices</p></div>
+            <div class="demo-comparison">
+                <div class="demo-card">
+                    <h3>Discrete</h3><p>Countable options</p>
+                    <div class="demo-desc">You choose from a finite set of options — meaning the choices are fixed, countable, and cannot be divided. There are exactly 9 floors: 1, 2, 3... up to 9. You can't press 3.5 or go to floor 6.7</div>
+                    <div class="demo-instruction">👆 Press floor buttons — watch the elevator move!</div>
+                    <div class="demo-area"><div id="elevatorPanel"></div></div>
+                    <div class="concept-summary box-indigo">
+                        <div class="concept-row"><span class="concept-icon">✅</span><div><div class="concept-title">When is it used?</div><div class="concept-body">When states or actions are countable: menu buttons, number of people, or chess moves — each is a distinct, countable option with no in-between values.</div></div></div>
+                    </div>
+                    <div class="examples"><span class="example-tag">Elevator Buttons</span><span class="example-tag">Menu Selection</span><span class="example-tag">Vote Choices</span></div>
+                </div>
+                <div class="demo-card">
+                    <h3>Continuous</h3><p>Infinite precision</p>
+                    <div class="demo-desc">Actions exist on a continuous range with infinite possible values. The drone can move to any point in space — coordinates like x=0.347, y=-0.891 are all valid.</div>
+                    <div class="demo-instruction">👆 Click anywhere — infinite possible positions</div>
+                    <div class="demo-area"><div class="drone-canvas-wrap" id="droneWrap"></div></div>
+                    <div class="concept-summary box-teal">
+                        <div class="concept-row"><span class="concept-icon">✅</span><div><div class="concept-title">When is it used?</div><div class="concept-body">When values are continuous and cannot be enumerated — weight, speed, rotation angle, temperature, or spatial position. Used in robotics, physics simulations, and any environment requiring fine-grained precision.</div></div></div>
+                    </div>
+                    <div class="examples"><span class="example-tag">Robot Arm Movement</span><span class="example-tag">Drone Navigation</span><span class="example-tag">Self-Driving Steering</span></div>
+                </div>
+            </div>
+            <div class="nav-controls"><button class="nav-btn" onclick="previousProperty()">Previous</button><button class="nav-btn primary" onclick="nextProperty()">Next</button></div>
+        </section>
+
+        <!-- Property 6: Single vs Multi-Agent -->
+        <section class="property-section" id="property-5">
+            <div class="property-header"><div class="property-number">06/06</div><h2>Single vs Multi-Agent</h2><p>Alone vs with others</p></div>
+            <div class="demo-comparison">
+                <div class="demo-card">
+                    <h3>Single-Agent</h3><p>Working alone</p>
+                    <div class="demo-desc">Only one agent operates in the environment. You scan and pay by yourself — no other agent affects your experience or decisions.</div>
+                    <div class="demo-instruction">👆 Scan items yourself</div>
+                    <div class="demo-area"><div class="checkout-screen" id="checkoutScreen"></div></div>
+                    <div class="concept-summary box-indigo">
+                        <div class="concept-row"><span class="concept-icon">✅</span><div><div class="concept-title">When is it used?</div><div class="concept-body">When only one decision-maker exists — ATM transactions, solo puzzle solving, self-checkout, or a personal AI assistant that doesn't need to model or compete with other agents.</div></div></div>
+                    </div>
+                    <div class="examples"><span class="example-tag">Online Learning</span><span class="example-tag">ATM Transaction</span><span class="example-tag">Self Checkout</span></div>
+                </div>
+                <div class="demo-card">
+                    <h3>Multi-Agent</h3><p>Multiple participants</p>
+                    <div class="demo-desc">Multiple agents share the same environment. Each participant's actions affect others — coordination, competition, and negotiation come into play.</div>
+                    <div class="demo-instruction">👥 View team members</div>
+                    <div class="demo-area"><div class="meeting-room" id="meetingRoom"></div></div>
+                    <div class="concept-summary box-teal">
+                        <div class="concept-row"><span class="concept-icon">✅</span><div><div class="concept-title">When is it used?</div><div class="concept-body">When multiple agents interact and influence each other — autonomous vehicles on roads, business negotiations, multiplayer games, or AI bots on a shared platform. Agents may cooperate or compete.</div></div></div>
+                    </div>
+                    <div class="examples"><span class="example-tag">Business Negotiation</span><span class="example-tag">Traffic Navigation</span><span class="example-tag">Team Meeting</span></div>
+                </div>
+            </div>
+            <div class="nav-controls"><button class="nav-btn" onclick="previousProperty()">Previous</button><button class="nav-btn primary" onclick="startQuiz()">Quiz</button></div>
+        </section>
+
+        <!-- Quiz Section -->
+        <section class="quiz-section" id="quizSection">
+            <div class="quiz-header"><h2>Test Your Knowledge</h2><div class="quiz-progress"><div class="quiz-progress-bar" id="quizProgressBar"></div></div></div>
+            <div id="quizContainer"></div>
+            <div class="quiz-result" id="quizResult">
+                <div class="score-display" id="scoreDisplay">0%</div>
+                <div class="result-message" id="resultMessage"></div>
+                <div class="quiz-summary" id="quizSummary"></div>
+                <div class="props-summary">
+                    <div class="props-summary-title">Quick Review: Environment Properties</div>
+                    <div class="prop-card"><div class="prop-card-head"><div class="prop-card-num">1</div><div class="prop-card-name">Observability</div></div><div class="prop-card-body"><div class="prop-side"><div class="prop-side-label">Fully Observable</div><div class="prop-side-text">Agent sees the complete state of the environment. Example: Chess — all pieces visible.</div></div><div class="prop-side"><div class="prop-side-label">Partially Observable</div><div class="prop-side-text">Some information is hidden from the agent. Example: Poker — you can't see opponents' cards.</div></div></div></div>
+                    <div class="prop-card"><div class="prop-card-head"><div class="prop-card-num">2</div><div class="prop-card-name">Determinism</div></div><div class="prop-card-body"><div class="prop-side"><div class="prop-side-label">Deterministic</div><div class="prop-side-text">Same action always produces the same result. Example: ATM — withdraw $100, get exactly $100.</div></div><div class="prop-side"><div class="prop-side-label">Stochastic</div><div class="prop-side-text">Outcomes involve randomness or uncertainty. Example: Flights — same route, different delays each day.</div></div></div></div>
+                    <div class="prop-card"><div class="prop-card-head"><div class="prop-card-num">3</div><div class="prop-card-name">Episodic vs Sequential</div></div><div class="prop-card-body"><div class="prop-side"><div class="prop-side-label">Episodic</div><div class="prop-side-text">Each action is independent — previous decisions don't affect the next. Example: Spam filter classifying emails.</div></div><div class="prop-side"><div class="prop-side-label">Sequential</div><div class="prop-side-text">Current decisions depend on and affect future ones. Example: Investment steps — each builds on the last.</div></div></div></div>
+                    <div class="prop-card"><div class="prop-card-head"><div class="prop-card-num">4</div><div class="prop-card-name">Static vs Dynamic</div></div><div class="prop-card-body"><div class="prop-side"><div class="prop-side-label">Static</div><div class="prop-side-text">Environment doesn't change while the agent is deciding. Example: Tic-Tac-Toe — board waits for your move.</div></div><div class="prop-side"><div class="prop-side-label">Dynamic</div><div class="prop-side-text">Environment changes on its own while agent decides. Example: Stock market — prices keep moving.</div></div></div></div>
+                    <div class="prop-card"><div class="prop-card-head"><div class="prop-card-num">5</div><div class="prop-card-name">Discrete vs Continuous</div></div><div class="prop-card-body"><div class="prop-side"><div class="prop-side-label">Discrete</div><div class="prop-side-text">Finite number of actions or states. Example: Elevator — only specific floor buttons 1, 2, 3…</div></div><div class="prop-side"><div class="prop-side-label">Continuous</div><div class="prop-side-text">Infinite possible values in actions or states. Example: Drone — can move to any coordinate in space.</div></div></div></div>
+                    <div class="prop-card"><div class="prop-card-head"><div class="prop-card-num">6</div><div class="prop-card-name">Single vs Multi-Agent</div></div><div class="prop-card-body"><div class="prop-side"><div class="prop-side-label">Single-Agent</div><div class="prop-side-text">Only one agent operates in the environment. Example: Self-checkout — you work alone.</div></div><div class="prop-side"><div class="prop-side-label">Multi-Agent</div><div class="prop-side-text">Multiple agents interact and affect each other. Example: Business negotiation — competing goals.</div></div></div></div>
+                </div>
+                <br>
+                <button class="btn" onclick="restartExperience()">Restart</button>
+            </div>
+        </section>
+    </div>
+
+    <footer class="site-footer">
+        <div class="footer-title">IT426: Artificial Intelligence Systems <span class="chapter-label">— Chapter 2: Intelligent Agents</span></div>
+        <div class="footer-subtitle">Information Technology Department · King Saud University</div>
+    </footer>
+
+    <script>
+        let currentProperty = 0, currentQuestion = 0, score = 0, answers = [];
+        let atmBalance = 5000, atmInput = '', currentFloor = 1, checkoutTotal = 0;
+
+        const quizQuestions = [
+            {question: "A car dashboard shows exact speed and fuel. What type?", options: ["Partially Observable", "Fully Observable", "Hidden", "Dynamic"], correct: 1, explanation: "The dashboard displays all the key information (speed, fuel, engine status) — the driver can see the full state of the car at all times."},
+            {question: "An ATM always dispenses exact amount requested. What type?", options: ["Deterministic", "Random", "Stochastic", "Episodic"], correct: 0, explanation: "The ATM's behavior is completely predictable — request $200 and you always get exactly $200. Same input → same output every time."},
+            {question: "Spam filter checks each email independently. What type?", options: ["Sequential", "Episodic", "Dynamic", "Continuous"], correct: 1, explanation: "Each email is classified on its own without considering previous emails. The result of one classification doesn't affect the next."},
+            {question: "Video call participants join/leave constantly. What type?", options: ["Static", "Discrete", "Dynamic", "Deterministic"], correct: 2, explanation: "The environment keeps changing on its own — people join, leave, speak, and mute without waiting for your action."},
+            {question: "Elevator has specific floor buttons (1,2,3...). What type?", options: ["Continuous", "Discrete", "Stochastic", "Observable"], correct: 1, explanation: "There are a finite, countable number of floors. You can only go to floor 1, 2, 3, etc. — you can't choose floor 2.7."},
+            {question: "Business meeting with multiple stakeholders. What type?", options: ["Single-Agent", "Cooperative Multi", "Competitive Multi", "Static"], correct: 2, explanation: "Multiple agents (stakeholders) interact in the same environment, each with their own goals — making it a competitive multi-agent scenario."}
+        ];
+
+        function updateBackBar() {
+            const introVisible = document.getElementById('introSection').style.display !== 'none';
+            const backBar = document.getElementById('backBar'), topNav = document.getElementById('topNav');
+            if (introVisible) { backBar.classList.remove('show'); topNav.style.display = 'flex'; }
+            else { backBar.classList.add('show'); topNav.style.display = 'none'; }
+        }
+
+        function goBack() {
+            const quizActive = document.getElementById('quizSection').classList.contains('active');
+            if (quizActive) {
+                document.getElementById('quizSection').classList.remove('active');
+                document.getElementById('quizResult').classList.remove('show');
+                document.getElementById('quizContainer').style.display = 'block';
+                document.getElementById('progressIndicator').style.display = '';
+                document.getElementById('progressIndicator').classList.add('show');
+                currentProperty = 5; showProperty(5); return;
+            }
+            if (currentProperty === 0) {
+                document.querySelectorAll('.property-section').forEach(s => s.classList.remove('active'));
+                document.getElementById('progressIndicator').classList.remove('show');
+                document.getElementById('introSection').style.display = 'block';
+                updateBackBar(); window.scrollTo({top: 0, behavior: 'smooth'});
+            } else { currentProperty--; showProperty(currentProperty); }
+        }
+
+        let chessInterval = null;
+        function initChessBoard() {
+            const container = document.getElementById('chessBoard'), turnEl = document.getElementById('chessTurn');
+            if (!container) return;
+            if (chessInterval) clearTimeout(chessInterval);
+            let board = [['♜','♞','♝','♛','♚','♝','♞','♜'],['♟','♟','♟','♟','♟','♟','♟','♟'],['','','','','','','',''],['','','','','','','',''],['','','','','','','',''],['','','','','','','',''],['♙','♙','♙','♙','♙','♙','♙','♙'],['♖','♘','♗','♕','♔','♗','♘','♖']];
+            const whitePieces = '♔♕♖♗♘♙', blackPieces = '♚♛♜♝♞♟';
+            let isWhiteTurn = true, lastFrom = null, lastTo = null, moveCount = 0;
+            function isWhite(p){return whitePieces.includes(p);} function isBlack(p){return blackPieces.includes(p);}
+            function getSimpleMoves(r,c){const piece=board[r][c];let moves=[];if(piece==='♙'){if(r>0&&!board[r-1][c])moves.push([r-1,c]);if(r===6&&!board[r-1][c]&&!board[r-2][c])moves.push([r-2,c]);if(r>0&&c>0&&isBlack(board[r-1][c-1]))moves.push([r-1,c-1]);if(r>0&&c<7&&isBlack(board[r-1][c+1]))moves.push([r-1,c+1]);}else if(piece==='♟'){if(r<7&&!board[r+1][c])moves.push([r+1,c]);if(r===1&&!board[r+1][c]&&!board[r+2][c])moves.push([r+2,c]);if(r<7&&c>0&&isWhite(board[r+1][c-1]))moves.push([r+1,c-1]);if(r<7&&c<7&&isWhite(board[r+1][c+1]))moves.push([r+1,c+1]);}else if(piece==='♘'||piece==='♞'){const jumps=[[-2,-1],[-2,1],[-1,-2],[-1,2],[1,-2],[1,2],[2,-1],[2,1]];const friendly=isWhite(piece)?whitePieces:blackPieces;jumps.forEach(([dr,dc])=>{const nr=r+dr,nc=c+dc;if(nr>=0&&nr<8&&nc>=0&&nc<8&&!friendly.includes(board[nr][nc]))moves.push([nr,nc]);});}else if(piece==='♖'||piece==='♜'){moves=slideMoves(r,c,[[0,1],[0,-1],[1,0],[-1,0]],piece);}else if(piece==='♗'||piece==='♝'){moves=slideMoves(r,c,[[1,1],[1,-1],[-1,1],[-1,-1]],piece);}else if(piece==='♕'||piece==='♛'){moves=slideMoves(r,c,[[0,1],[0,-1],[1,0],[-1,0],[1,1],[1,-1],[-1,1],[-1,-1]],piece);}else if(piece==='♔'||piece==='♚'){const dirs=[[0,1],[0,-1],[1,0],[-1,0],[1,1],[1,-1],[-1,1],[-1,-1]];const friendly=isWhite(piece)?whitePieces:blackPieces;dirs.forEach(([dr,dc])=>{const nr=r+dr,nc=c+dc;if(nr>=0&&nr<8&&nc>=0&&nc<8&&!friendly.includes(board[nr][nc]))moves.push([nr,nc]);});}return moves;}
+            function slideMoves(r,c,dirs,piece){const friendly=isWhite(piece)?whitePieces:blackPieces,enemy=isWhite(piece)?blackPieces:whitePieces;let moves=[];dirs.forEach(([dr,dc])=>{let nr=r+dr,nc=c+dc;while(nr>=0&&nr<8&&nc>=0&&nc<8){if(friendly.includes(board[nr][nc]))break;moves.push([nr,nc]);if(enemy.includes(board[nr][nc]))break;nr+=dr;nc+=dc;}});return moves;}
+            function render(){container.innerHTML='';for(let r=0;r<8;r++)for(let c=0;c<8;c++){const cell=document.createElement('div');cell.className='chess-cell '+((r+c)%2===0?'light':'dark');if(lastFrom&&lastFrom[0]===r&&lastFrom[1]===c)cell.classList.add('last-move');if(lastTo&&lastTo[0]===r&&lastTo[1]===c)cell.classList.add('last-move');cell.textContent=board[r][c];container.appendChild(cell);}}
+            function getAllMoves(forWhite){let allMoves=[];for(let r=0;r<8;r++)for(let c=0;c<8;c++){const p=board[r][c];if(forWhite?isWhite(p):isBlack(p)){const moves=getSimpleMoves(r,c);moves.forEach(m=>allMoves.push({from:[r,c],to:m,capture:forWhite?isBlack(board[m[0]][m[1]]):isWhite(board[m[0]][m[1]])}));}}return allMoves;}
+            function autoPlay(){if(moveCount>40){turnEl.textContent='Restarting...';chessInterval=setTimeout(initChessBoard,1500);return;}const allMoves=getAllMoves(isWhiteTurn);if(allMoves.length===0){turnEl.textContent='Game Over! Restarting...';chessInterval=setTimeout(initChessBoard,2000);return;}turnEl.textContent=(isWhiteTurn?'⬜ White':'⬛ Black')+' is thinking...';turnEl.className='chess-turn thinking';chessInterval=setTimeout(()=>{let captures=allMoves.filter(m=>m.capture);let move=captures.length>0&&Math.random()>0.3?captures[Math.floor(Math.random()*captures.length)]:allMoves[Math.floor(Math.random()*allMoves.length)];lastFrom=move.from;lastTo=move.to;board[move.to[0]][move.to[1]]=board[move.from[0]][move.from[1]];board[move.from[0]][move.from[1]]='';moveCount++;turnEl.textContent=(isWhiteTurn?'⬜ White':'⬛ Black')+' moved — all moves visible!';turnEl.className='chess-turn '+(isWhiteTurn?'white':'black');isWhiteTurn=!isWhiteTurn;render();chessInterval=setTimeout(autoPlay,1200);},800);}
+            render(); chessInterval=setTimeout(autoPlay,1000);
+        }
+
+        function initProductGrid(){const container=document.getElementById('productGrid');if(!container)return;const products=[{name:'📱'},{name:'💻'},{name:'⌚'},{name:'🎧'},{name:'📷'},{name:'🖨️'}];const actualPrices=['$999','$1299','$399','$249','$799','$199'];const ratings=['⭐⭐⭐⭐⭐','⭐⭐⭐⭐','⭐⭐⭐','⭐⭐⭐⭐⭐','⭐⭐⭐⭐','⭐⭐⭐'];container.innerHTML='';products.forEach((product,i)=>{const box=document.createElement('div');box.className='product-box';box.innerHTML=`<div style="font-size:2.5rem">${product.name}</div><div class="price">???</div><div class="rating">${ratings[i]}</div>`;box.onclick=function(){if(!this.classList.contains('revealed')){this.classList.add('revealed');this.querySelector('.price').textContent=actualPrices[i];}};container.appendChild(box);});}
+
+        function initATM(){const container=document.getElementById('atmScreen');if(!container)return;atmBalance=5000;atmInput='';container.innerHTML=`<div class="atm-display" id="atmDisplay">Balance: $${atmBalance}<br>Enter amount to withdraw:</div><div class="atm-buttons"><button class="atm-btn" onclick="atmPress('1')">1</button><button class="atm-btn" onclick="atmPress('2')">2</button><button class="atm-btn" onclick="atmPress('3')">3</button><button class="atm-btn" onclick="atmPress('4')">4</button><button class="atm-btn" onclick="atmPress('5')">5</button><button class="atm-btn" onclick="atmPress('6')">6</button><button class="atm-btn" onclick="atmPress('7')">7</button><button class="atm-btn" onclick="atmPress('8')">8</button><button class="atm-btn" onclick="atmPress('9')">9</button><button class="atm-btn" onclick="atmPress('C')">C</button><button class="atm-btn" onclick="atmPress('0')">0</button><button class="atm-btn" onclick="atmPress('OK')" style="background:var(--success)">OK</button></div>`;}
+        function atmPress(key){const display=document.getElementById('atmDisplay');if(key==='C'){atmInput='';display.innerHTML=`Balance: $${atmBalance}<br>Enter amount to withdraw:`;}else if(key==='OK'&&atmInput){const amount=parseInt(atmInput);if(amount>0&&amount<=atmBalance){atmBalance-=amount;display.innerHTML=`✓ Withdrawn: $${amount}<br>New Balance: $${atmBalance}`;atmInput='';}else{display.innerHTML=`❌ Invalid amount<br>Balance: $${atmBalance}`;atmInput='';}}else if(key!=='OK'){atmInput+=key;display.innerHTML=`Balance: $${atmBalance}<br>Amount: $${atmInput}`;}}
+
+        function initFlightBoard(){const container=document.getElementById('flightBoard');if(!container)return;updateFlights();}
+        function updateFlights(){const container=document.getElementById('flightBoard');if(!container)return;const flights=[{time:'10:30',route:'NYC → LAX',flight:'AA 123'},{time:'11:15',route:'SFO → CHI',flight:'UA 456'},{time:'12:00',route:'MIA → SEA',flight:'DL 789'},{time:'13:45',route:'BOS → DEN',flight:'SW 321'}];container.innerHTML='';flights.forEach(flight=>{const status=Math.random()>0.5?'ontime':'delayed';const row=document.createElement('div');row.className='flight-row';row.innerHTML=`<div class="flight-time">${flight.time}</div><div>${flight.flight}</div><div class="flight-route">${flight.route}</div><div class="flight-status ${status}">${status==='ontime'?'On Time':'Delayed'}</div>`;container.appendChild(row);});const btn=document.createElement('button');btn.className='refresh-btn';btn.textContent='🔄 Refresh Board';btn.onclick=updateFlights;container.appendChild(btn);}
+
+        let emailInterval=null;
+        function initEmailList(){const container=document.getElementById('emailList');if(!container)return;if(emailInterval)clearInterval(emailInterval);const emails=[{sender:'boss@company.com',subject:'Meeting Tomorrow at 3PM',spam:false},{sender:'winner123@prize.net',subject:'YOU WON $1,000,000!!!',spam:true},{sender:'friend@email.com',subject:'Lunch plans this Friday?',spam:false},{sender:'no-reply@bank-secure.xyz',subject:'Verify your account NOW',spam:true},{sender:'team@project.com',subject:'Sprint review notes attached',spam:false},{sender:'deals@cheap-meds.biz',subject:'DISCOUNT 90% OFF!!!',spam:true}];let order=emails.map((_,i)=>i);for(let i=order.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[order[i],order[j]]=[order[j],order[i]];}container.innerHTML='';emails.forEach(email=>{const item=document.createElement('div');item.className='email-item';item.innerHTML=`<div class="email-header"><span class="email-sender">${email.sender}</span><span class="spam-badge">${email.spam?'⚠️ SPAM':'✓ SAFE'}</span></div><div class="email-subject">${email.subject}</div>`;container.appendChild(item);});const note=document.createElement('div');note.className='episodic-note';note.textContent="Each email is classified independently — order doesn't matter";container.appendChild(note);let step=0;function processNext(){if(step>=order.length){setTimeout(()=>{const items=container.querySelectorAll('.email-item');items.forEach(it=>{it.className='email-item';});for(let i=order.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[order[i],order[j]]=[order[j],order[i]];}step=0;},2500);return;}const idx=order[step];const items=container.querySelectorAll('.email-item');items.forEach(it=>it.classList.remove('processing'));items[idx].classList.add('processing');setTimeout(()=>{items[idx].classList.remove('processing');items[idx].classList.add('done','checked',emails[idx].spam?'spam':'safe');step++;processNext();},1500);}emailInterval=setTimeout(processNext,800);}
+
+        let seqInterval=null;
+        function initInvestmentTimeline(){const container=document.getElementById('investmentTimeline');if(!container)return;if(seqInterval)clearTimeout(seqInterval);const steps=[{title:'1. Set Financial Goals',desc:'Define objectives and timeline',results:['Goal: Retirement in 20 years','Goal: Buy house in 5 years','Goal: Emergency fund in 1 year']},{title:'2. Risk Assessment',desc:'Based on goals → evaluate risk tolerance',results:['→ Long horizon = High risk OK','→ Medium horizon = Moderate risk','→ Short horizon = Low risk only']},{title:'3. Choose Investment',desc:'Based on risk level → select instruments',results:['→ High risk → Growth stocks','→ Moderate → Index funds','→ Low risk → Bonds & savings']},{title:'4. Allocate Budget',desc:'Based on choices → distribute money',results:['→ 50% stocks, 30% funds, 20% bonds','→ Based on previous selections','→ Rebalance quarterly']}];function runSequence(){container.innerHTML='';steps.forEach((step,i)=>{const div=document.createElement('div');div.className='timeline-step waiting';div.innerHTML=`<div class="step-number">${i+1}</div><div class="step-title">${step.title}</div><div class="step-desc">${step.desc}</div><div class="step-result"></div>`;container.appendChild(div);});const note=document.createElement('div');note.className='sequential-note';note.textContent='Each step uses the result of the previous — order matters!';container.appendChild(note);let current=0;function doStep(){if(current>=steps.length){seqInterval=setTimeout(runSequence,3000);return;}const stepEls=container.querySelectorAll('.timeline-step');stepEls[current].classList.remove('waiting');stepEls[current].classList.add('active');setTimeout(()=>{const result=steps[current].results[Math.floor(Math.random()*steps[current].results.length)];stepEls[current].classList.remove('active');stepEls[current].classList.add('completed');stepEls[current].querySelector('.step-result').textContent='✓ '+result;current++;setTimeout(doStep,600);},1800);}setTimeout(doStep,500);}runSequence();}
+
+        function initTicTacToe(){const container=document.getElementById('tttContainer');if(!container)return;let board=Array(9).fill(''),turn='X',gameOver=false;const wins=[[0,1,2],[3,4,5],[6,7,8],[0,3,6],[1,4,7],[2,5,8],[0,4,8],[2,4,6]];function checkWin(b,p){return wins.some(w=>w.every(i=>b[i]===p));}function render(){container.innerHTML='';const boardEl=document.createElement('div');boardEl.className='ttt-board';for(let i=0;i<9;i++){const cell=document.createElement('div');cell.className='ttt-cell'+(board[i]==='X'?' x':board[i]==='O'?' o':'');cell.textContent=board[i];cell.onclick=()=>{if(board[i]||gameOver)return;board[i]=turn;if(checkWin(board,turn)){gameOver=true;render();return;}if(board.every(c=>c)){gameOver=true;turn='draw';render();return;}turn=turn==='X'?'O':'X';render();};boardEl.appendChild(cell);}container.appendChild(boardEl);const status=document.createElement('div');status.className='ttt-status';status.textContent=gameOver?(turn==='draw'?'Draw!':turn+' Wins!'):'Your turn: '+turn+' — environment waits for you';container.appendChild(status);const resetBtn=document.createElement('button');resetBtn.className='ttt-reset';resetBtn.textContent='Reset';resetBtn.onclick=()=>{board=Array(9).fill('');turn='X';gameOver=false;render();};container.appendChild(resetBtn);}render();}
+
+        let stockInterval=null;
+        function initStockTicker(){const container=document.getElementById('stockTicker');if(!container)return;if(stockInterval)clearInterval(stockInterval);let stocks=[{name:'Apple Inc.',symbol:'AAPL',price:178.50},{name:'Tesla Inc.',symbol:'TSLA',price:242.30},{name:'Amazon',symbol:'AMZN',price:185.70},{name:'Google',symbol:'GOOGL',price:141.20}];let prevPrices=stocks.map(s=>s.price);function renderStocks(){container.innerHTML='<div class="stock-header"><span class="stock-live-dot"></span> LIVE — Prices updating automatically</div>';stocks.forEach((stock,i)=>{const change=stock.price-prevPrices[i];const pct=((change/prevPrices[i])*100).toFixed(2);const up=change>=0;const item=document.createElement('div');item.className='stock-item '+(up?'flash-up':'flash-down');item.innerHTML=`<div><div class="stock-name">${stock.name}</div><div class="stock-symbol">${stock.symbol}</div></div><div class="stock-price">$${stock.price.toFixed(2)}</div><div class="stock-change ${up?'up':'down'}">${up?'+':''}${pct}%</div>`;container.appendChild(item);});}renderStocks();stockInterval=setInterval(()=>{prevPrices=stocks.map(s=>s.price);stocks.forEach(s=>{const delta=(Math.random()-0.48)*4;s.price=Math.max(50,s.price+delta);});renderStocks();},2000);}
+
+        function initElevator(){const container=document.getElementById('elevatorPanel');if(!container)return;currentFloor=1;let isMoving=false;const TOTAL_FLOORS=9;container.innerHTML='';const building=document.createElement('div');building.className='elevator-building';const shaftWrapper=document.createElement('div');shaftWrapper.className='shaft-wrapper';shaftWrapper.style.position='relative';const shaft=document.createElement('div');shaft.className='building-shaft';shaft.id='buildingShaft';for(let f=TOTAL_FLOORS;f>=1;f--){const floorEl=document.createElement('div');floorEl.className='building-floor'+(f===1?' floor-active':'');floorEl.id='elfloor-'+f;floorEl.innerHTML=`<div class="floor-doors"><div class="floor-door-left"></div><div class="floor-door-right"></div></div><span class="floor-num">${f}</span>`;shaft.appendChild(floorEl);}const cabin=document.createElement('div');cabin.className='elevator-cabin';cabin.id='elevatorCabin';cabin.textContent='🛗';shaftWrapper.appendChild(shaft);shaftWrapper.appendChild(cabin);setTimeout(()=>{const c=document.getElementById('elevatorCabin');if(c){c.style.transition='none';c.style.top=((TOTAL_FLOORS-1)*38+3)+'px';setTimeout(()=>c.style.transition='',60);}},80);const panel=document.createElement('div');panel.className='floor-buttons-panel';const dispEl=document.createElement('div');dispEl.className='elevator-display-new';dispEl.id='elevatorDisplayNew';dispEl.textContent='1';panel.appendChild(dispEl);[[9,8,7],[6,5,4],[3,2,1]].forEach(row=>{const rowEl=document.createElement('div');rowEl.className='floor-btn-row';row.forEach(f=>{const wrap=document.createElement('div');wrap.style.cssText='display:flex;flex-direction:column;align-items:center;gap:4px;';const btn=document.createElement('button');btn.className='floor-btn-new'+(f===1?' floor-btn-current':'');btn.id='elevbtn-'+f;btn.textContent=f;btn.onclick=()=>goToFloor(f);const lbl=document.createElement('span');lbl.style.cssText='font-size:0.6rem;color:#6b7280;font-weight:600;letter-spacing:0.3px;';lbl.textContent='Floor '+f;wrap.appendChild(btn);wrap.appendChild(lbl);rowEl.appendChild(wrap);});panel.appendChild(rowEl);});const statusEl=document.createElement('div');statusEl.className='elevator-status';statusEl.id='elevatorStatus';statusEl.textContent='Press a floor button';panel.appendChild(statusEl);building.appendChild(shaftWrapper);building.appendChild(panel);container.appendChild(building);function goToFloor(f){if(f===currentFloor||isMoving)return;isMoving=true;for(let i=1;i<=TOTAL_FLOORS;i++){const btn=document.getElementById('elevbtn-'+i);if(btn){btn.classList.remove('floor-btn-current','floor-btn-going');if(i===f)btn.classList.add('floor-btn-going');}const fl=document.getElementById('elfloor-'+i);if(fl){fl.classList.remove('floor-lit');if(i===f)fl.classList.add('floor-lit');}}const stat=document.getElementById('elevatorStatus');if(stat)stat.textContent='Going to floor '+f+'...';const c=document.getElementById('elevatorCabin');if(c)c.style.top=((TOTAL_FLOORS-f)*38+3)+'px';const travelTime=Math.abs(f-currentFloor)*180+500;setTimeout(()=>{currentFloor=f;isMoving=false;for(let i=1;i<=TOTAL_FLOORS;i++){const btn=document.getElementById('elevbtn-'+i);if(btn){btn.classList.remove('floor-btn-current','floor-btn-going');if(i===f)btn.classList.add('floor-btn-current');}const fl=document.getElementById('elfloor-'+i);if(fl){fl.classList.remove('floor-active','floor-lit');if(i===f)fl.classList.add('floor-active');}}const d=document.getElementById('elevatorDisplayNew');if(d)d.textContent=f;if(stat)stat.textContent="Floor "+f+" — you can't press 3.5!";},travelTime);}}
+
+        function initDroneCanvas(){const wrap=document.getElementById('droneWrap');if(!wrap)return;wrap.innerHTML=`<div class="drone-canvas" id="droneCanvas"><div class="drone-dot" id="droneDot" style="left:160px;top:160px;"></div></div><div class="drone-coords" id="droneCoords">Position: x=0.000, y=0.000</div>`;const canvas=document.getElementById('droneCanvas'),dot=document.getElementById('droneDot'),coords=document.getElementById('droneCoords');for(let i=1;i<8;i++){const h=document.createElement('div');h.className='grid-line-h';h.style.top=(i*40)+'px';canvas.appendChild(h);const v=document.createElement('div');v.className='grid-line-v';v.style.left=(i*40)+'px';canvas.appendChild(v);}let trails=[];canvas.onclick=function(e){const rect=canvas.getBoundingClientRect();const x=e.clientX-rect.left,y=e.clientY-rect.top;const trail=document.createElement('div');trail.className='drone-trail';trail.style.left=x+'px';trail.style.top=y+'px';canvas.appendChild(trail);trails.push(trail);if(trails.length>15){trails[0].remove();trails.shift();}dot.style.left=x+'px';dot.style.top=y+'px';const normX=((x/320)*2-1).toFixed(3),normY=(((320-y)/320)*2-1).toFixed(3);coords.textContent='Position: x='+normX+', y='+normY;};}
+
+        function initCheckout(){const container=document.getElementById('checkoutScreen');if(!container)return;checkoutTotal=0;const items=[{name:'🍎 Apple',price:1.99},{name:'🥛 Milk',price:3.49},{name:'🍞 Bread',price:2.99},{name:'🥚 Eggs',price:4.99}];let scannedItems=[];function render(){container.innerHTML=`<div class="item-scanner" onclick="scanRandomItem()"><div style="font-size:3rem;margin-bottom:10px">📷</div><div style="color:var(--primary);font-weight:600">Scan Item</div></div><div class="scanned-items" id="scannedItems"></div><div class="checkout-total"><span>Total:</span><span>$${checkoutTotal.toFixed(2)}</span></div>`;const sc=document.getElementById('scannedItems');scannedItems.forEach(item=>{const div=document.createElement('div');div.className='scanned-item';div.innerHTML=`<span>${item.name}</span><span>$${item.price.toFixed(2)}</span>`;sc.appendChild(div);});}window.scanRandomItem=function(){if(scannedItems.length<4){const item=items[scannedItems.length];scannedItems.push(item);checkoutTotal+=item.price;render();}};render();}
+
+        function initMeetingRoom(){const container=document.getElementById('meetingRoom');if(!container)return;const participants=[{name:'Sarah Johnson',role:'Project Manager',avatar:'SJ'},{name:'Mike Chen',role:'Lead Developer',avatar:'MC'},{name:'Emma Davis',role:'UX Designer',avatar:'ED'},{name:'James Wilson',role:'Data Analyst',avatar:'JW'}];container.innerHTML='<div class="participant-list"></div>';const list=container.querySelector('.participant-list');participants.forEach(p=>{const div=document.createElement('div');div.className='participant';div.innerHTML=`<div class="participant-avatar">${p.avatar}</div><div class="participant-info"><div class="participant-name">${p.name}</div><div class="participant-role">${p.role}</div></div><div class="participant-status online">Online</div>`;list.appendChild(div);});}
+
+        function startJourney(){document.getElementById('introSection').style.display='none';document.getElementById('progressIndicator').classList.add('show');updateBackBar();showProperty(0);}
+
+        function showProperty(i){document.querySelectorAll('.property-section').forEach(s=>s.classList.remove('active'));document.getElementById('property-'+i).classList.add('active');if(chessInterval&&i!==0){clearTimeout(chessInterval);chessInterval=null;}if(stockInterval&&i!==3){clearInterval(stockInterval);stockInterval=null;}if(emailInterval&&i!==2){clearTimeout(emailInterval);emailInterval=null;}if(seqInterval&&i!==2){clearTimeout(seqInterval);seqInterval=null;}if(i===0){initChessBoard();initProductGrid();}else if(i===1){initATM();initFlightBoard();}else if(i===2){initEmailList();initInvestmentTimeline();}else if(i===3){initTicTacToe();initStockTicker();}else if(i===4){initElevator();initDroneCanvas();}else if(i===5){initCheckout();initMeetingRoom();}updateProgress(i+1);updateBackBar();window.scrollTo({top:0,behavior:'smooth'});}
+
+        function nextProperty(){if(currentProperty<5){currentProperty++;showProperty(currentProperty);}}
+        function previousProperty(){if(currentProperty>0){currentProperty--;showProperty(currentProperty);}}
+        function updateProgress(c){document.getElementById('progressText').textContent='Property '+c+'/6';}
+
+        function startQuiz(){document.getElementById('property-5').classList.remove('active');document.getElementById('quizSection').classList.add('active');document.getElementById('progressIndicator').style.display='none';currentQuestion=0;score=0;answers=[];updateBackBar();showQuestion(0);}
+        function showQuestion(i){const q=quizQuestions[i];document.getElementById('quizContainer').innerHTML=`<div class="question-container"><div class="question-text">${i+1}. ${q.question}</div><div class="options">${q.options.map((o,j)=>`<div class="option" onclick="selectAnswer(${j})">${o}</div>`).join('')}</div><div class="nav-controls"><button class="nav-btn primary" onclick="submitAnswer()" id="submitBtn" disabled>Submit</button></div></div>`;updateQuizProgress();}
+        function selectAnswer(i){document.querySelectorAll('.option').forEach(o=>o.classList.remove('selected'));document.querySelectorAll('.option')[i].classList.add('selected');document.getElementById('submitBtn').disabled=false;answers[currentQuestion]=i;}
+        function submitAnswer(){const q=quizQuestions[currentQuestion];const options=document.querySelectorAll('.option');options.forEach(o=>o.style.pointerEvents='none');document.getElementById('submitBtn').disabled=true;const isCorrect=answers[currentQuestion]===q.correct;if(isCorrect){options[answers[currentQuestion]].classList.add('correct');score++;}else{options[answers[currentQuestion]].classList.add('wrong');options[q.correct].classList.add('correct');}setTimeout(()=>showPopup(isCorrect,q),600);}
+        function showPopup(isCorrect,q){const overlay=document.createElement('div');overlay.className='quiz-overlay';overlay.innerHTML=`<div class="quiz-popup ${isCorrect?'popup-correct':'popup-wrong'}"><div class="popup-icon">${isCorrect?'✅':'❌'}</div><div class="popup-title ${isCorrect?'green':'red'}">${isCorrect?'Correct!':'Incorrect'}</div>${!isCorrect?'<div class="popup-correct-answer">✓ Correct answer: '+q.options[q.correct]+'</div>':''}<div class="popup-explanation">${q.explanation}</div><button class="popup-btn" onclick="closePopup(this)">Continue</button></div>`;document.body.appendChild(overlay);}
+        function closePopup(btn){btn.closest('.quiz-overlay').remove();if(currentQuestion<quizQuestions.length-1){currentQuestion++;showQuestion(currentQuestion);}else{showResults();}}
+        function updateQuizProgress(){const progress=((currentQuestion+1)/quizQuestions.length)*100;document.getElementById('quizProgressBar').style.width=progress+'%';}
+        function showResults(){const percentage=Math.round((score/quizQuestions.length)*100);document.getElementById('quizContainer').style.display='none';document.getElementById('quizResult').classList.add('show');document.getElementById('scoreDisplay').textContent=percentage+'%';let message=percentage>=80?'Excellent work! 🎉':percentage>=60?'Great job! 👏':percentage>=40?'Good effort! 👍':'Keep learning! 📚';document.getElementById('resultMessage').textContent=message+' — You got '+score+' out of '+quizQuestions.length;const summary=document.getElementById('quizSummary');summary.innerHTML='';quizQuestions.forEach((q,i)=>{const isCorrect=answers[i]===q.correct;const item=document.createElement('div');item.className='summary-item '+(isCorrect?'summary-correct':'summary-wrong');let answerHTML=isCorrect?'<span class="right">✓ '+q.options[q.correct]+'</span>':'<span class="wrong-text">'+q.options[answers[i]]+'</span> → <span class="right">✓ '+q.options[q.correct]+'</span>';item.innerHTML=`<div class="summary-q">${i+1}. ${q.question}</div><div class="summary-a">${answerHTML}</div>`;summary.appendChild(item);});}
+        function restartExperience(){currentProperty=0;currentQuestion=0;score=0;answers=[];document.getElementById('quizSection').classList.remove('active');document.getElementById('quizResult').classList.remove('show');document.getElementById('quizContainer').style.display='block';document.getElementById('introSection').style.display='block';document.getElementById('progressIndicator').classList.remove('show');updateBackBar();window.scrollTo({top:0,behavior:'smooth'});}
+    </script>
+</body>
+</html>
