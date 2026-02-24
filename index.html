@@ -151,7 +151,6 @@
         .elevator-display-new { background: #000; color: #0f0; font-size: 2rem; font-weight: 700; text-align: center; padding: 8px 15px; border-radius: 8px; margin-bottom: 5px; font-family: monospace; letter-spacing: 3px; width: 100%; }
         .elevator-status { text-align: center; font-size: 0.75rem; color: #6b7280; margin-top: 4px; font-style: italic; min-height: 16px; }
         .concept-summary { border-radius: 14px; padding: 16px 18px; margin: 18px 0 14px; display: flex; flex-direction: column; gap: 12px; }
-        /* ====== UNIFIED COLOR FOR ALL CONCEPT BOXES ====== */
         .box-indigo,
         .box-amber,
         .box-green,
@@ -160,7 +159,6 @@
             background: linear-gradient(135deg, rgba(79,70,229,0.07), rgba(79,70,229,0.03));
             border: 1.5px solid rgba(79,70,229,0.2);
         }
-        /* ================================================== */
         .concept-row { display: flex; align-items: flex-start; gap: 12px; }
         .concept-icon { font-size: 1.4rem; flex-shrink: 0; margin-top: 1px; }
         .concept-title { font-weight: 700; font-size: 0.9rem; color: var(--text); margin-bottom: 3px; }
@@ -244,6 +242,152 @@
         .prop-side { background: var(--bg); padding: 10px 14px; border-radius: 8px; }
         .prop-side-label { font-weight: 700; font-size: 0.78rem; color: var(--primary); margin-bottom: 3px; text-transform: uppercase; letter-spacing: 0.5px; }
         .prop-side-text { font-size: 0.85rem; color: var(--light); line-height: 1.5; }
+
+        /* ============================================================
+           RESPONSIVE STYLES — جوال وتابلت
+           لا تغيير في التصميم، فقط تكييف للشاشات الصغيرة
+           ============================================================ */
+
+        /* Tablet: 768px - 1024px */
+        @media (max-width: 1024px) {
+            .container { padding: 0 24px; }
+            .demo-comparison { grid-template-columns: 1fr 1fr; gap: 24px; }
+            .demo-card { padding: 28px 24px; }
+            .demo-card h3 { font-size: 1.5rem; }
+            .demo-area { padding: 24px 16px; min-height: 340px; }
+            .property-header h2 { font-size: 2.4rem; }
+            header { padding: 50px 0 35px; margin-bottom: 40px; }
+        }
+
+        /* Mobile: max 768px */
+        @media (max-width: 768px) {
+            .container { padding: 0 16px; }
+
+            /* Nav */
+            .top-nav { padding: 12px 16px; }
+            .top-nav .nav-right .nav-badge:not(.accent) { display: none; }
+            .back-bar { padding: 12px 16px; }
+            .back-bar .nav-right .nav-badge:not(.accent) { display: none; }
+            .progress-indicator { top: auto; bottom: 20px; right: 16px; padding: 10px 16px; font-size: 0.85rem; }
+
+            /* Header */
+            header { padding: 40px 0 30px; margin-bottom: 30px; }
+            h1 { font-size: clamp(1.8rem, 8vw, 2.8rem); margin-bottom: 12px; }
+            .subtitle { font-size: 1rem; }
+            .ksu-logo { height: 55px; }
+
+            /* Intro */
+            .intro { padding: 40px 0; }
+            .intro h2 { font-size: 1.8rem; }
+            .intro p { font-size: 1rem; }
+            .btn { padding: 14px 32px; font-size: 0.95rem; }
+
+            /* Property section */
+            .property-section { padding: 20px 0 50px; }
+            .property-header { margin-bottom: 30px; }
+            .property-header h2 { font-size: 2rem; }
+            .property-header p { font-size: 1rem; }
+
+            /* Demo comparison — stack vertically */
+            .demo-comparison { grid-template-columns: 1fr; gap: 24px; margin: 30px 0; }
+            .demo-card { padding: 24px 18px; border-radius: 16px; }
+            .demo-card h3 { font-size: 1.4rem; }
+            .demo-area { padding: 20px 12px; min-height: auto; }
+
+            /* Chess board — scale down */
+            .chess-board { grid-template-columns: repeat(8, 36px); grid-template-rows: repeat(8, 36px); }
+            .chess-cell { width: 36px; height: 36px; font-size: 1.2rem; }
+
+            /* Product grid */
+            .product-grid { grid-template-columns: repeat(3, 1fr); gap: 10px; }
+            .product-box { padding: 14px 10px; }
+            .product-box .price { font-size: 1.1rem; }
+
+            /* ATM */
+            .atm-screen { width: 100%; max-width: 320px; padding: 20px; }
+            .atm-btn { padding: 12px 8px; font-size: 0.9rem; }
+
+            /* Flight board */
+            .flight-row { grid-template-columns: 60px 1fr 80px; gap: 8px; }
+            .flight-row > div:nth-child(2) { display: none; } /* hide flight number on mobile */
+
+            /* TicTacToe */
+            .ttt-board { grid-template-columns: repeat(3, 85px); grid-template-rows: repeat(3, 85px); }
+            .ttt-cell { font-size: 2rem; }
+
+            /* Stock ticker */
+            .stock-price { font-size: 1.1rem; }
+            .stock-name { font-size: 0.9rem; }
+
+            /* Elevator */
+            .elevator-building { gap: 16px; }
+            .floor-btn-new { width: 40px; height: 40px; font-size: 0.9rem; }
+            .floor-btn-row { gap: 8px; }
+
+            /* Drone canvas */
+            .drone-canvas { width: 270px; height: 270px; }
+
+            /* Quiz */
+            .quiz-header h2 { font-size: 2rem; }
+            .question-text { font-size: 1.15rem; margin-bottom: 24px; }
+            .option { padding: 16px 18px; }
+            .quiz-result { padding: 40px 20px; }
+            .score-display { font-size: 4.5rem; }
+            .prop-card-body { grid-template-columns: 1fr; }
+
+            /* Nav controls */
+            .nav-controls { gap: 12px; margin-top: 40px; }
+            .nav-btn { padding: 14px 16px; font-size: 0.9rem; }
+
+            /* Examples */
+            .example-tag { padding: 6px 12px; font-size: 0.8rem; }
+
+            /* Participants */
+            .participant { padding: 14px; gap: 12px; }
+            .participant-avatar { width: 42px; height: 42px; font-size: 1rem; }
+        }
+
+        /* Small mobile: max 480px */
+        @media (max-width: 480px) {
+            .container { padding: 0 12px; }
+            .top-nav { padding: 10px 14px; }
+            .top-nav .nav-left { font-size: 0.9rem; }
+            .nav-badge.accent { padding: 5px 10px; font-size: 0.72rem; }
+
+            header { padding: 30px 0 25px; }
+            h1 { font-size: clamp(1.5rem, 9vw, 2.2rem); }
+            .ksu-logo { height: 44px; }
+
+            .demo-card { padding: 18px 14px; }
+            .demo-card h3 { font-size: 1.25rem; }
+            .demo-area { padding: 16px 8px; }
+
+            /* Chess — smaller cells */
+            .chess-board { grid-template-columns: repeat(8, 30px); grid-template-rows: repeat(8, 30px); }
+            .chess-cell { width: 30px; height: 30px; font-size: 1rem; }
+
+            /* TicTacToe */
+            .ttt-board { grid-template-columns: repeat(3, 75px); grid-template-rows: repeat(3, 75px); }
+            .ttt-cell { font-size: 1.8rem; }
+
+            /* Drone canvas */
+            .drone-canvas { width: 240px; height: 240px; }
+
+            .flight-row { grid-template-columns: 55px 1fr 72px; padding: 10px 12px; }
+            .flight-time { font-size: 0.95rem; }
+
+            .atm-screen { padding: 16px; }
+            .atm-display { padding: 14px; font-size: 0.9rem; }
+
+            .quiz-header h2 { font-size: 1.6rem; }
+            .score-display { font-size: 3.5rem; }
+            .result-message { font-size: 1rem; }
+
+            .checkout-screen { padding: 16px; }
+            .checkout-total { font-size: 1.2rem; }
+
+            .prop-card { padding: 16px; }
+        }
     </style>
 </head>
 <body>
@@ -552,7 +696,7 @@
 
         function initElevator(){const container=document.getElementById('elevatorPanel');if(!container)return;currentFloor=1;let isMoving=false;const TOTAL_FLOORS=9;container.innerHTML='';const building=document.createElement('div');building.className='elevator-building';const shaftWrapper=document.createElement('div');shaftWrapper.className='shaft-wrapper';shaftWrapper.style.position='relative';const shaft=document.createElement('div');shaft.className='building-shaft';shaft.id='buildingShaft';for(let f=TOTAL_FLOORS;f>=1;f--){const floorEl=document.createElement('div');floorEl.className='building-floor'+(f===1?' floor-active':'');floorEl.id='elfloor-'+f;floorEl.innerHTML=`<div class="floor-doors"><div class="floor-door-left"></div><div class="floor-door-right"></div></div><span class="floor-num">${f}</span>`;shaft.appendChild(floorEl);}const cabin=document.createElement('div');cabin.className='elevator-cabin';cabin.id='elevatorCabin';cabin.textContent='🛗';shaftWrapper.appendChild(shaft);shaftWrapper.appendChild(cabin);setTimeout(()=>{const c=document.getElementById('elevatorCabin');if(c){c.style.transition='none';c.style.top=((TOTAL_FLOORS-1)*38+3)+'px';setTimeout(()=>c.style.transition='',60);}},80);const panel=document.createElement('div');panel.className='floor-buttons-panel';const dispEl=document.createElement('div');dispEl.className='elevator-display-new';dispEl.id='elevatorDisplayNew';dispEl.textContent='1';panel.appendChild(dispEl);[[9,8,7],[6,5,4],[3,2,1]].forEach(row=>{const rowEl=document.createElement('div');rowEl.className='floor-btn-row';row.forEach(f=>{const wrap=document.createElement('div');wrap.style.cssText='display:flex;flex-direction:column;align-items:center;gap:4px;';const btn=document.createElement('button');btn.className='floor-btn-new'+(f===1?' floor-btn-current':'');btn.id='elevbtn-'+f;btn.textContent=f;btn.onclick=()=>goToFloor(f);const lbl=document.createElement('span');lbl.style.cssText='font-size:0.6rem;color:#6b7280;font-weight:600;letter-spacing:0.3px;';lbl.textContent='Floor '+f;wrap.appendChild(btn);wrap.appendChild(lbl);rowEl.appendChild(wrap);});panel.appendChild(rowEl);});const statusEl=document.createElement('div');statusEl.className='elevator-status';statusEl.id='elevatorStatus';statusEl.textContent='Press a floor button';panel.appendChild(statusEl);building.appendChild(shaftWrapper);building.appendChild(panel);container.appendChild(building);function goToFloor(f){if(f===currentFloor||isMoving)return;isMoving=true;for(let i=1;i<=TOTAL_FLOORS;i++){const btn=document.getElementById('elevbtn-'+i);if(btn){btn.classList.remove('floor-btn-current','floor-btn-going');if(i===f)btn.classList.add('floor-btn-going');}const fl=document.getElementById('elfloor-'+i);if(fl){fl.classList.remove('floor-lit');if(i===f)fl.classList.add('floor-lit');}}const stat=document.getElementById('elevatorStatus');if(stat)stat.textContent='Going to floor '+f+'...';const c=document.getElementById('elevatorCabin');if(c)c.style.top=((TOTAL_FLOORS-f)*38+3)+'px';const travelTime=Math.abs(f-currentFloor)*180+500;setTimeout(()=>{currentFloor=f;isMoving=false;for(let i=1;i<=TOTAL_FLOORS;i++){const btn=document.getElementById('elevbtn-'+i);if(btn){btn.classList.remove('floor-btn-current','floor-btn-going');if(i===f)btn.classList.add('floor-btn-current');}const fl=document.getElementById('elfloor-'+i);if(fl){fl.classList.remove('floor-active','floor-lit');if(i===f)fl.classList.add('floor-active');}}const d=document.getElementById('elevatorDisplayNew');if(d)d.textContent=f;if(stat)stat.textContent="Floor "+f+" — you can't press 3.5!";},travelTime);}}
 
-        function initDroneCanvas(){const wrap=document.getElementById('droneWrap');if(!wrap)return;wrap.innerHTML=`<div class="drone-canvas" id="droneCanvas"><div class="drone-dot" id="droneDot" style="left:160px;top:160px;"></div></div><div class="drone-coords" id="droneCoords">Position: x=0.000, y=0.000</div>`;const canvas=document.getElementById('droneCanvas'),dot=document.getElementById('droneDot'),coords=document.getElementById('droneCoords');for(let i=1;i<8;i++){const h=document.createElement('div');h.className='grid-line-h';h.style.top=(i*40)+'px';canvas.appendChild(h);const v=document.createElement('div');v.className='grid-line-v';v.style.left=(i*40)+'px';canvas.appendChild(v);}let trails=[];canvas.onclick=function(e){const rect=canvas.getBoundingClientRect();const x=e.clientX-rect.left,y=e.clientY-rect.top;const trail=document.createElement('div');trail.className='drone-trail';trail.style.left=x+'px';trail.style.top=y+'px';canvas.appendChild(trail);trails.push(trail);if(trails.length>15){trails[0].remove();trails.shift();}dot.style.left=x+'px';dot.style.top=y+'px';const normX=((x/320)*2-1).toFixed(3),normY=(((320-y)/320)*2-1).toFixed(3);coords.textContent='Position: x='+normX+', y='+normY;};}
+        function initDroneCanvas(){const wrap=document.getElementById('droneWrap');if(!wrap)return;wrap.innerHTML=`<div class="drone-canvas" id="droneCanvas"><div class="drone-dot" id="droneDot" style="left:160px;top:160px;"></div></div><div class="drone-coords" id="droneCoords">Position: x=0.000, y=0.000</div>`;const canvas=document.getElementById('droneCanvas'),dot=document.getElementById('droneDot'),coords=document.getElementById('droneCoords');for(let i=1;i<8;i++){const h=document.createElement('div');h.className='grid-line-h';h.style.top=(i*40)+'px';canvas.appendChild(h);const v=document.createElement('div');v.className='grid-line-v';v.style.left=(i*40)+'px';canvas.appendChild(v);}let trails=[];canvas.onclick=function(e){const rect=canvas.getBoundingClientRect();const x=e.clientX-rect.left,y=e.clientY-rect.top;const trail=document.createElement('div');trail.className='drone-trail';trail.style.left=x+'px';trail.style.top=y+'px';canvas.appendChild(trail);trails.push(trail);if(trails.length>15){trails[0].remove();trails.shift();}dot.style.left=x+'px';dot.style.top=y+'px';const w=canvas.offsetWidth,h2=canvas.offsetHeight;const normX=((x/w)*2-1).toFixed(3),normY=(((h2-y)/h2)*2-1).toFixed(3);coords.textContent='Position: x='+normX+', y='+normY;};}
 
         function initCheckout(){const container=document.getElementById('checkoutScreen');if(!container)return;checkoutTotal=0;const items=[{name:'🍎 Apple',price:1.99},{name:'🥛 Milk',price:3.49},{name:'🍞 Bread',price:2.99},{name:'🥚 Eggs',price:4.99}];let scannedItems=[];function render(){container.innerHTML=`<div class="item-scanner" onclick="scanRandomItem()"><div style="font-size:3rem;margin-bottom:10px">📷</div><div style="color:var(--primary);font-weight:600">Scan Item</div></div><div class="scanned-items" id="scannedItems"></div><div class="checkout-total"><span>Total:</span><span>$${checkoutTotal.toFixed(2)}</span></div>`;const sc=document.getElementById('scannedItems');scannedItems.forEach(item=>{const div=document.createElement('div');div.className='scanned-item';div.innerHTML=`<span>${item.name}</span><span>$${item.price.toFixed(2)}</span>`;sc.appendChild(div);});}window.scanRandomItem=function(){if(scannedItems.length<4){const item=items[scannedItems.length];scannedItems.push(item);checkoutTotal+=item.price;render();}};render();}
 
@@ -567,7 +711,7 @@
         function updateProgress(c){document.getElementById('progressText').textContent='Property '+c+'/6';}
 
         function startQuiz(){document.getElementById('property-5').classList.remove('active');document.getElementById('quizSection').classList.add('active');document.getElementById('progressIndicator').style.display='none';currentQuestion=0;score=0;answers=[];updateBackBar();showQuestion(0);}
-        function showQuestion(i){const q=quizQuestions[i];document.getElementById('quizContainer').innerHTML=`<div class="question-container"><div class="question-text">${i+1}. ${q.question}</div><div class="options">${q.options.map((o,j)=>`<div class="option" onclick="selectAnswer(${j})">${o}</div>`).join('')}</div><div class="nav-controls"><button class="nav-btn primary" onclick="submitAnswer()" id="submitBtn" disabled>Submit</button></div></div>`;updateQuizProgress();}
+        function showQuestion(i){const q=quizQuestions[i];document.getElementById('quizContainer').innerHTML=`<div class="question-container"><div class="question-text">${i+1}. ${q.question}</div><div class="options">${q.options.map((o,j)=>`<div class="option" onclick="selectAnswer(${j})">${o}</div>`).join('')}</div><div class="nav-controls"><button class="nav-btn primary" onclick="submitAnswer()" id="submitBtn" disabled>Submit</button></div></div>`;}
         function selectAnswer(i){document.querySelectorAll('.option').forEach(o=>o.classList.remove('selected'));document.querySelectorAll('.option')[i].classList.add('selected');document.getElementById('submitBtn').disabled=false;answers[currentQuestion]=i;}
         function submitAnswer(){const q=quizQuestions[currentQuestion];const options=document.querySelectorAll('.option');options.forEach(o=>o.style.pointerEvents='none');document.getElementById('submitBtn').disabled=true;const isCorrect=answers[currentQuestion]===q.correct;if(isCorrect){options[answers[currentQuestion]].classList.add('correct');score++;}else{options[answers[currentQuestion]].classList.add('wrong');options[q.correct].classList.add('correct');}setTimeout(()=>showPopup(isCorrect,q),600);}
         function showPopup(isCorrect,q){const overlay=document.createElement('div');overlay.className='quiz-overlay';overlay.innerHTML=`<div class="quiz-popup ${isCorrect?'popup-correct':'popup-wrong'}"><div class="popup-icon">${isCorrect?'✅':'❌'}</div><div class="popup-title ${isCorrect?'green':'red'}">${isCorrect?'Correct!':'Incorrect'}</div>${!isCorrect?'<div class="popup-correct-answer">✓ Correct answer: '+q.options[q.correct]+'</div>':''}<div class="popup-explanation">${q.explanation}</div><button class="popup-btn" onclick="closePopup(this)">Continue</button></div>`;document.body.appendChild(overlay);}
@@ -578,4 +722,3 @@
     </script>
 </body>
 </html>
-
