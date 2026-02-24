@@ -151,11 +151,16 @@
         .elevator-display-new { background: #000; color: #0f0; font-size: 2rem; font-weight: 700; text-align: center; padding: 8px 15px; border-radius: 8px; margin-bottom: 5px; font-family: monospace; letter-spacing: 3px; width: 100%; }
         .elevator-status { text-align: center; font-size: 0.75rem; color: #6b7280; margin-top: 4px; font-style: italic; min-height: 16px; }
         .concept-summary { border-radius: 14px; padding: 16px 18px; margin: 18px 0 14px; display: flex; flex-direction: column; gap: 12px; }
-        .box-indigo  { background: linear-gradient(135deg, rgba(79,70,229,0.07), rgba(79,70,229,0.03)); border: 1.5px solid rgba(79,70,229,0.2); }
-        .box-amber   { background: linear-gradient(135deg, rgba(245,158,11,0.07), rgba(245,158,11,0.03)); border: 1.5px solid rgba(245,158,11,0.25); }
-        .box-green   { background: linear-gradient(135deg, rgba(16,185,129,0.07), rgba(16,185,129,0.03)); border: 1.5px solid rgba(16,185,129,0.25); }
-        .box-red     { background: linear-gradient(135deg, rgba(239,68,68,0.07), rgba(239,68,68,0.03)); border: 1.5px solid rgba(239,68,68,0.2); }
-        .box-teal    { background: linear-gradient(135deg, rgba(6,214,160,0.07), rgba(6,214,160,0.03)); border: 1.5px solid rgba(6,214,160,0.25); }
+        /* ====== UNIFIED COLOR FOR ALL CONCEPT BOXES ====== */
+        .box-indigo,
+        .box-amber,
+        .box-green,
+        .box-red,
+        .box-teal {
+            background: linear-gradient(135deg, rgba(79,70,229,0.07), rgba(79,70,229,0.03));
+            border: 1.5px solid rgba(79,70,229,0.2);
+        }
+        /* ================================================== */
         .concept-row { display: flex; align-items: flex-start; gap: 12px; }
         .concept-icon { font-size: 1.4rem; flex-shrink: 0; margin-top: 1px; }
         .concept-title { font-weight: 700; font-size: 0.9rem; color: var(--text); margin-bottom: 3px; }
