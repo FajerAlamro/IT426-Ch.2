@@ -256,7 +256,7 @@
         <a class="back-link" onclick="goBack()">← Back</a>
         <div class="nav-right">
             <span class="nav-badge accent">IT426 · AI Systems</span>
-            <span class="nav-badge">KSU</span>
+            <img src="images/ksu.png" style="height:36px; object-fit:contain; filter:brightness(0) invert(1); opacity:0.93;">
         </div>
     </div>
     <div class="progress-indicator" id="progressIndicator"><span id="progressText">Property 1/6</span></div>
@@ -294,7 +294,7 @@
                     <div class="demo-desc">The agent can only see part of the environment. Key information like prices and ratings are hidden until you interact — decisions are made with incomplete data.</div>
                     <div class="demo-instruction">👆 Click products to reveal details</div>
                     <div class="demo-area"><div class="product-grid" id="productGrid"></div></div>
-                    <div class="concept-summary box-amber">
+                    <div class="concept-summary box-indigo">
                         <div class="concept-row"><span class="concept-icon">✅</span><div><div class="concept-title">When is it used?</div><div class="concept-body">When the agent cannot access full state — medical diagnosis (hidden symptoms), poker (hidden cards), or real-world robotics where sensors have limits. Agent must reason under uncertainty.</div></div></div>
                     </div>
                     <div class="examples"><span class="example-tag">Online Shopping</span><span class="example-tag">Medical Diagnosis</span><span class="example-tag">Stock Trading</span></div>
@@ -312,7 +312,7 @@
                     <div class="demo-desc">The outcome is 100% predictable. Withdraw $200 and you'll always get exactly $200 — no surprises, no randomness.</div>
                     <div class="demo-instruction">👆 Enter PIN and withdraw</div>
                     <div class="demo-area"><div class="atm-screen" id="atmScreen"></div></div>
-                    <div class="concept-summary box-green">
+                    <div class="concept-summary box-indigo">
                         <div class="concept-row"><span class="concept-icon">✅</span><div><div class="concept-title">When is it used?</div><div class="concept-body">When outcomes are fully predictable and repeatable — calculators, vending machines, alarm clocks, or any rule-based system where the same input always produces the exact same output.</div></div></div>
                     </div>
                     <div class="examples"><span class="example-tag">ATM Withdrawal</span><span class="example-tag">Calculator</span><span class="example-tag">Alarm Clock</span></div>
@@ -322,7 +322,7 @@
                     <div class="demo-desc">The same conditions can produce different outcomes each time. Refresh the board — flight statuses change randomly due to unpredictable factors like weather.</div>
                     <div class="demo-instruction">🔄 Refresh to see status changes</div>
                     <div class="demo-area"><div class="flight-board" id="flightBoard"></div></div>
-                    <div class="concept-summary box-red">
+                    <div class="concept-summary box-indigo">
                         <div class="concept-row"><span class="concept-icon">✅</span><div><div class="concept-title">When is it used?</div><div class="concept-body">When real-world uncertainty is involved — weather prediction, traffic flow, customer behavior, or any environment affected by random external factors the agent cannot fully control.</div></div></div>
                     </div>
                     <div class="examples"><span class="example-tag">Flight Delays</span><span class="example-tag">Network Speed</span><span class="example-tag">Customer Arrival</span></div>
@@ -350,7 +350,7 @@
                     <div class="demo-desc">Each step builds on the result of the previous one. You can't choose investments before assessing risk — the order is critical and decisions are chained.</div>
                     <div class="demo-instruction">🔗 Watch — each step depends on the previous result</div>
                     <div class="demo-area"><div class="investment-timeline" id="investmentTimeline"></div></div>
-                    <div class="concept-summary box-amber">
+                    <div class="concept-summary box-indigo">
                         <div class="concept-row"><span class="concept-icon">✅</span><div><div class="concept-title">When is it used?</div><div class="concept-body">When decisions affect future options — chess, robotic navigation, investment planning, or medical treatment steps. Each action has long-term consequences that must be considered before acting.</div></div></div>
                     </div>
                     <div class="examples"><span class="example-tag">Investment Planning</span><span class="example-tag">Career Progression</span><span class="example-tag">House Renovation</span></div>
@@ -368,7 +368,7 @@
                     <div class="demo-desc">The environment doesn't change while you're deciding. Take as long as you want — nothing moves until you make your move.</div>
                     <div class="demo-instruction">👆 Play at your own pace — nothing changes until you move</div>
                     <div class="demo-area"><div id="tttContainer" style="display:flex;flex-direction:column;align-items:center;"></div></div>
-                    <div class="concept-summary box-green">
+                    <div class="concept-summary box-indigo">
                         <div class="concept-row"><span class="concept-icon">✅</span><div><div class="concept-title">When is it used?</div><div class="concept-body">When the environment is frozen until the agent acts — crossword puzzles, photo editing, Sudoku, or theorem proving. The agent can deliberate without time pressure or fear of the world shifting mid-decision.</div></div></div>
                     </div>
                     <div class="examples"><span class="example-tag">Crossword Puzzle</span><span class="example-tag">Photo Editing</span><span class="example-tag">Sudoku</span></div>
@@ -378,7 +378,7 @@
                     <div class="demo-desc">The environment keeps changing whether you act or not. Stock prices move on their own — if you wait too long, the opportunity might be gone.</div>
                     <div class="demo-instruction">📈 Watch prices change in real-time — you can't pause the market!</div>
                     <div class="demo-area"><div class="stock-ticker" id="stockTicker"></div></div>
-                    <div class="concept-summary box-red">
+                    <div class="concept-summary box-indigo">
                         <div class="concept-row"><span class="concept-icon">✅</span><div><div class="concept-title">When is it used?</div><div class="concept-body">When the world keeps changing independently — self-driving cars, live trading bots, online multiplayer games, or real-time robotics. The agent must act quickly because hesitation itself changes the environment.</div></div></div>
                     </div>
                     <div class="examples"><span class="example-tag">Stock Market</span><span class="example-tag">Self-Driving Car</span><span class="example-tag">Online Multiplayer Game</span></div>
@@ -406,7 +406,7 @@
                     <div class="demo-desc">Actions exist on a continuous range with infinite possible values. The drone can move to any point in space — coordinates like x=0.347, y=-0.891 are all valid.</div>
                     <div class="demo-instruction">👆 Click anywhere — infinite possible positions</div>
                     <div class="demo-area"><div class="drone-canvas-wrap" id="droneWrap"></div></div>
-                    <div class="concept-summary box-teal">
+                    <div class="concept-summary box-indigo">
                         <div class="concept-row"><span class="concept-icon">✅</span><div><div class="concept-title">When is it used?</div><div class="concept-body">When values are continuous and cannot be enumerated — weight, speed, rotation angle, temperature, or spatial position. Used in robotics, physics simulations, and any environment requiring fine-grained precision.</div></div></div>
                     </div>
                     <div class="examples"><span class="example-tag">Robot Arm Movement</span><span class="example-tag">Drone Navigation</span><span class="example-tag">Self-Driving Steering</span></div>
@@ -434,7 +434,7 @@
                     <div class="demo-desc">Multiple agents share the same environment. Each participant's actions affect others — coordination, competition, and negotiation come into play.</div>
                     <div class="demo-instruction">👥 View team members</div>
                     <div class="demo-area"><div class="meeting-room" id="meetingRoom"></div></div>
-                    <div class="concept-summary box-teal">
+                    <div class="concept-summary box-indigo">
                         <div class="concept-row"><span class="concept-icon">✅</span><div><div class="concept-title">When is it used?</div><div class="concept-body">When multiple agents interact and influence each other — autonomous vehicles on roads, business negotiations, multiplayer games, or AI bots on a shared platform. Agents may cooperate or compete.</div></div></div>
                     </div>
                     <div class="examples"><span class="example-tag">Business Negotiation</span><span class="example-tag">Traffic Navigation</span><span class="example-tag">Team Meeting</span></div>
