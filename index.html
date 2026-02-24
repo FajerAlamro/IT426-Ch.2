@@ -249,14 +249,14 @@
         </div>
         <div class="nav-right">
             <span class="nav-badge accent">AI Systems · Chapter 2</span>
-         <img id="ksuLogoMain" src="images/ksu.png" style="height:36px; object-fit:contain; filter:brightness(0) invert(1); opacity:0.93;">
+         <img src="images/ksu.png" style="height:36px; object-fit:contain; filter:brightness(0) invert(1); opacity:0.93;">
         </div>
     </nav>
     <div class="back-bar" id="backBar">
         <a class="back-link" onclick="goBack()">← Back</a>
         <div class="nav-right">
             <span class="nav-badge accent">IT426 · AI Systems</span>
-            <img id="ksuLogoBack" src="images/ksu.png" style="height:36px; object-fit:contain; filter:brightness(0) invert(1); opacity:0.93;">
+            <img src="images/ksu.png" style="height:36px; object-fit:contain; filter:brightness(0) invert(1); opacity:0.93;">
         </div>
     </div>
     <div class="progress-indicator" id="progressIndicator"><span id="progressText">Property 1/6</span></div>
@@ -472,28 +472,6 @@
     </footer>
 
     <script>
-        // Sync KSU logo: once main logo loads, copy its src to back-bar logo
-        window.addEventListener('load', function() {
-            const mainLogo = document.getElementById('ksuLogoMain');
-            const backLogo = document.getElementById('ksuLogoBack');
-            if (mainLogo && backLogo) {
-                if (mainLogo.complete && mainLogo.naturalWidth > 0) {
-                    const canvas = document.createElement('canvas');
-                    canvas.width = mainLogo.naturalWidth;
-                    canvas.height = mainLogo.naturalHeight;
-                    canvas.getContext('2d').drawImage(mainLogo, 0, 0);
-                    backLogo.src = canvas.toDataURL('image/png');
-                } else {
-                    mainLogo.onload = function() {
-                        const canvas = document.createElement('canvas');
-                        canvas.width = mainLogo.naturalWidth;
-                        canvas.height = mainLogo.naturalHeight;
-                        canvas.getContext('2d').drawImage(mainLogo, 0, 0);
-                        backLogo.src = canvas.toDataURL('image/png');
-                    };
-                }
-            }
-        });
 
         let currentProperty = 0, currentQuestion = 0, score = 0, answers = [];
         let atmBalance = 5000, atmInput = '', currentFloor = 1, checkoutTotal = 0;
